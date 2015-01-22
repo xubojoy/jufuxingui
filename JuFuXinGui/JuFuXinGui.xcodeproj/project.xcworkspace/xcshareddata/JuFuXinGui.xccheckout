@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
+	<false/>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>6FD8C6F3-C08D-42E3-B475-6AC39A586EB8</string>
+	<key>IDESourceControlProjectName</key>
+	<string>JuFuXinGui</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>e7d34f18-3312-7142-9bb6-ed6b9e010be4</key>
+		<string>https://192.168.1.175/svn/JuFuXinGui</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>JuFuXinGui.xcodeproj</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>e7d34f18-3312-7142-9bb6-ed6b9e010be4</key>
+		<string>../..</string>
+	</dict>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>111</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>e7d34f18-3312-7142-9bb6-ed6b9e010be4</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.subversion</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>e7d34f18-3312-7142-9bb6-ed6b9e010be4</string>
+			<key>IDESourceControlWCCName</key>
+			<string>JuFuXinGui</string>
+		</dict>
+	</array>
+</dict>
+</plist>

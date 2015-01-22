@@ -1,0 +1,111 @@
+//
+//  ZhanNeiXiaoXIViewController.m
+//  JuFuXinGui
+//
+//  Created by mac on 15/1/8.
+//  Copyright (c) 2015年 XB. All rights reserved.
+//
+
+#import "ZhanNeiXiaoXIViewController.h"
+#import "HAN_Constants.h"
+#import "Han_NoteTableViewCell.h"
+#import "ChongzhiViewController.h"
+@interface ZhanNeiXiaoXIViewController ()
+
+@end
+
+@implementation ZhanNeiXiaoXIViewController
+- (void)viewDidLoad
+{
+    [super viewDidLoad];
+    self.tableview.backgroundColor=RGBACOLOR(232, 232, 232, 1);
+    self.view.backgroundColor=RGBACOLOR(232, 232, 232, 1);
+    [self setRightSwipeGesture];
+    [self initHeader];
+    [self initbody];
+    //Do any additional setup after loading the view from its nib.
+}
+
+-(void)viewWillAppear:(BOOL)animated{
+    [super viewWillAppear:animated];
+    [[NTViewController sharedController] hidesTabBar:YES animated:YES];
+}
+#pragma mark - 头部相关
+//初始化头部
+- (void)initHeader{
+    //初始化布局与背景
+    self.header  = [[HeaderView alloc] initWithTitle:@"我的消息" navigationController:self.navigationController];
+    self.header.backBut.hidden = NO;
+    [self.view addSubview:self.header];
+   // [self addback];
+    
+}
+-(void)addback{
+    UIButton * btn=[UIButton buttonWithType:UIButtonTypeCustom];
+    btn.frame=CGRectMake(10,24,20,20);
+    [btn setBackgroundImage:[UIImage imageNamed:@"top_return"] forState:UIControlStateNormal];
+    
+    [btn addTarget:self action:@selector(popToFrontViewController:) forControlEvents:UIControlEventTouchUpInside];
+    [self.header addSubview:btn];
+    
+}
+-(void)initbody{
+    self.tableview=[[UITableView alloc]initWithFrame:CGRectMake(10, self.header.frame.size.height, screen_width-20,Screen_height) style:UITableViewStyleGrouped];
+    self.tableview.separatorStyle=UITableViewCellSeparatorStyleNone;
+    self.tableview.rowHeight=200;
+    self.tableview.delegate=self;
+    self.tableview.dataSource=self;
+    [self.view addSubview:self.tableview];
+}
+#pragma mark UITableViewDataSource @required
+
+
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
+    return 1;
+}
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView{
+    return 2;
+}
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
+    static NSString * Identifier=@"Identifier";
+    Han_NoteTableViewCell * cell=[tableView dequeueReusableCellWithIdentifier:Identifier];
+    if (!cell) {
+        cell=[[Han_NoteTableViewCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:Identifier];
+        cell.selectionStyle=UITableViewCellSelectionStyleNone;
+        cell.layer.borderWidth=2;
+        cell.layer.borderColor=[UIColor lightGrayColor].CGColor;
+        cell.layer.masksToBounds=YES;
+    }
+    if (indexPath.section==1) {
+        cell.backgroundColor=RGBACOLOR(244, 0, 0, 1);
+        cell.tag=1;
+    }
+    return cell;
+}
+
+-(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
+    
+    Han_NoteTableViewCell *cell =(Han_NoteTableViewCell *) [tableView cellForRowAtIndexPath:indexPath];
+    if (cell.tag==1) {
+        ChongzhiViewController * chcv=[[ChongzhiViewController alloc]init];
+        [self presentViewController:chcv animated:YES completion:nil];
+    }
+    
+   
+}
+- (void)didReceiveMemoryWarning {
+    [super didReceiveMemoryWarning];
+    // Dispose of any resources that can be recreated.
+}
+
+/*
+#pragma mark - Navigation
+
+// In a storyboard-based application, you will often want to do a little preparation before navigation
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    // Get the new view controller using [segue destinationViewController].
+    // Pass the selected object to the new view controller.
+}
+*/
+
+@end

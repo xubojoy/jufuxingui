@@ -1,0 +1,115 @@
+//
+//  CommonItemTxtView.m
+//  styler
+//
+//  Created by wangwanggy820 on 14-4-8.
+//  Copyright (c) 2014年 mlzj. All rights reserved.
+//
+
+#import "CommonItemTxtView.h"
+#import "CommonItemTxt.h"
+#import "UIView+Custom.h"
+#import "Macro.h"
+
+@implementation CommonItemTxtView
+
+//- (id)initWithFrame:(CGRect)frame
+//{
+//    self = [super initWithFrame:frame];
+//    if (self) {
+//        // Initialization code
+//    }
+//    return self;
+//}
+
+-(id)initWithFrame:(CGRect)frame commonItemTxtArray:(NSArray *)commonItemTxtArray font:(UIFont *)font{
+    self = [super init];
+    if (self) {
+        self.frame = frame;
+        self.commonItemTxtArray = commonItemTxtArray;
+        int i = 0;
+        float padding = general_padding/2;
+        float y = padding;
+        for (CommonItemTxt *itemTxt in commonItemTxtArray) {
+            //使用代码创建UIView，并使用代码添加两个UILable分别显示条目的标题和内容
+            NSDictionary *attrDic = [NSDictionary dictionaryWithObjectsAndKeys:font, NSFontAttributeName, nil];
+            CGSize titleSize = [itemTxt.title boundingRectWithSize:CGSizeMake(frame.size.width, 20000.0f) options:NSStringDrawingUsesLineFragmentOrigin attributes:attrDic context:nil].size;
+            
+            
+            //计算内容区域的尺寸
+            float contentWidth = frame.size.width - general_margin*2;
+            NSDictionary *contentAttrDic = [NSDictionary dictionaryWithObjectsAndKeys:font, NSFontAttributeName, nil];
+            CGSize contentSize = [itemTxt.content boundingRectWithSize:CGSizeMake(frame.size.width, 20000.0f) options:NSStringDrawingUsesLineFragmentOrigin attributes:contentAttrDic context:nil].size;
+            
+            CGRect frame = CGRectMake(general_margin, general_margin-2, general_padding, general_padding);
+            
+            self.markImgView = [[UIImageView alloc] initWithFrame:frame];
+            self.markImgView.image = [UIImage imageNamed:@"round_icon"];
+            [self addSubview:self.markImgView];
+
+            
+//            //对标题进行布局
+            frame = CGRectMake(general_margin+general_padding+4, y, screen_width-general_margin*2, titleSize.height+padding);
+            UILabel *title = [[UILabel alloc] initWithFrame:frame];
+            //对标题设置内容及样式
+            title.backgroundColor = [UIColor clearColor];
+            title.textColor = [UIColor blackColor];
+            title.font = [UIFont systemFontOfSize:15];
+            title.text = itemTxt.title;
+            [self addSubview:title];
+            
+            
+            float contentHeight = contentSize.height;
+            UILabel *content = [[UILabel alloc] initWithFrame:CGRectMake(general_margin, y+title.frame.size.height+padding/2, contentWidth, contentHeight)];
+            content.backgroundColor = [UIColor clearColor];
+            content.textAlignment = NSTextAlignmentLeft;
+            content.numberOfLines = 0;
+            content.font = font;
+            content.textColor = [UIColor lightGrayColor];;
+            content.text = itemTxt.content;
+            [self addSubview:content];
+            y += contentSize.height +2*padding+title.frame.size.height;
+            i++;
+            
+            //        设置content的行间距
+            NSMutableAttributedString * attributedString1 = [[NSMutableAttributedString alloc] initWithString:content.text];
+            NSMutableParagraphStyle * paragraphStyle1 = [[NSMutableParagraphStyle alloc] init];
+            [paragraphStyle1 setLineSpacing:padding];
+            [attributedString1 addAttribute:NSParagraphStyleAttributeName value:paragraphStyle1 range:NSMakeRange(0, [content.text length])];
+            [content setAttributedText:attributedString1];
+            [content sizeToFit];
+            
+            self.upLine = [[UIView alloc] initWithFrame:CGRectMake(0, 0, screen_width, splite_line_height)];
+            self.upLine.backgroundColor = splite_line_color;
+            [self addSubview:self.upLine];
+            
+            
+            self.downLine = [[UIView alloc] initWithFrame:CGRectMake(0, self.frame.size.height-splite_line_height, screen_width, splite_line_height)];
+            self.downLine.backgroundColor = splite_line_color;
+            [self addSubview:self.downLine];
+        
+        }
+    }
+    return self;
+}
+
+
++(float) judgeHeight:(NSArray *)commonItemTxtArray font:(UIFont *)font
+{
+    float height = 0;
+    for (CommonItemTxt *itemTxt in commonItemTxtArray) {
+        NSDictionary *attrDic = [NSDictionary dictionaryWithObjectsAndKeys:font, NSFontAttributeName, nil];
+        CGSize titleSize = [itemTxt.title boundingRectWithSize:CGSizeMake(screen_width, 20000.0f) options:NSStringDrawingUsesFontLeading attributes:attrDic context:nil].size;
+  
+        float titleWidth = titleSize.width;
+        float contentWidth = screen_width - titleWidth - general_padding;
+ 
+        NSDictionary *contentAttrDic = [NSDictionary dictionaryWithObjectsAndKeys:font, NSFontAttributeName, nil];
+        CGSize contentSize = [itemTxt.content boundingRectWithSize:CGSizeMake(contentWidth, 20000.0f) options:NSStringDrawingUsesFontLeading attributes:contentAttrDic context:nil].size;
+        
+        height += contentSize.height+general_padding*2;
+    }
+    return height;
+}
+
+@end

@@ -1,0 +1,58 @@
+//
+//  TopViewCell.m
+//  JuFuXinGui
+//
+//  Created by myStyle on 14-12-29.
+//  Copyright (c) 2014年 XB. All rights reserved.
+//
+
+#import "TopViewCell.h"
+
+@implementation TopViewCell
+
+-(id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier{
+
+    self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
+    if (self) {
+        
+        self = [[[NSBundle mainBundle] loadNibNamed:@"TopViewCell" owner:self options:nil] lastObject];
+
+        self.exceptYearRateLab.textColor = [UIColor redColor];
+        self.minInvestLab.textColor = [UIColor redColor];
+        self.fengBiQiLab.textColor = [UIColor redColor];
+        
+        self.midLine.frame = CGRectMake(general_margin, 29, screen_width-general_margin, 0.5);
+        self.midLine.backgroundColor = splite_line_color;
+        self.downLine.frame = CGRectMake(0, 59.5, screen_width, 0.5);
+        self.downLine.backgroundColor = splite_line_color;
+        
+        CGRect minInvestLabFrame = self.minInvestLab.frame;
+        CGRect fengBiQiLabFrame = self.fengBiQiLab.frame;
+        minInvestLabFrame.origin.x = (screen_width-100)/2;
+        fengBiQiLabFrame.origin.x = (screen_width-80-general_margin);
+        self.minInvestLab.frame = minInvestLabFrame;
+        self.fengBiQiLab.frame = fengBiQiLabFrame;
+        
+        CGRect minInvestLabelFrame = self.minInvestLabel.frame;
+        CGRect fengBiLabelFrame = self.fengBiLabel.frame;
+        minInvestLabelFrame.origin.x = (screen_width-60)/2;
+        fengBiLabelFrame.origin.x = (screen_width-50-general_margin);
+        self.minInvestLabel.frame = minInvestLabelFrame;
+        self.fengBiLabel.frame = fengBiLabelFrame;
+    }
+    return self;
+}
+
+
+
+- (void)awakeFromNib {
+    // Initialization code
+}
+
+- (void)setSelected:(BOOL)selected animated:(BOOL)animated {
+    [super setSelected:selected animated:animated];
+
+    // Configure the view for the selected state
+}
+
+@end

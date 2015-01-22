@@ -1,0 +1,112 @@
+//
+//  Macro.h
+//  TeachThin
+//
+//  Created by 巩鑫 on 14-11-19.
+//  Copyright (c) 2014年 巩鑫. All rights reserved.
+//
+
+#ifndef TeachThin_Macro_h
+#define TeachThin_Macro_h
+//判断程序的版本
+#define IOS_7 ([[[UIDevice currentDevice] systemVersion] floatValue] >= 7.0f)
+
+
+#define commonFrame  CGRectMake(screen_width-50, 20, 44, 43.5)
+
+#define splite_line_height 0.5
+
+#define splite_line_color  RGBACOLOR(204, 204, 204, 1)
+#define view_bg_color      RGBACOLOR(240, 240, 240, 1)
+
+#define navigation_height     44
+#define status_bar_height     20
+#define tabbar_height         51
+#define general_margin        15
+#define general_cell_height   44
+#define general_padding       10
+#define general_space         20
+#define general_height        40
+#define splite_line_height    0.5
+#define screen_width          [UIScreen mainScreen].bounds.size.width
+#define main_content_height   [UIScreen mainScreen].bounds.size.height - self.header.frame.size.height
+#define bottomY(view)         view.frame.size.height + view.frame.origin.y
+#define leftX(view)           view.frame.size.width + view.frame.origin.x
+#define IOS6                  ([[[UIDevice currentDevice] systemVersion] floatValue] < 7)?YES:NO
+#define IOS7                  ([[[UIDevice currentDevice] systemVersion] floatValue] >= 7)?YES:NO
+#define IOS8                  ([[[UIDevice currentDevice] systemVersion] floatValue] >= 8)?YES:NO
+
+
+
+#define degreesToRadians(x) (M_PI*(x)/180.0) //把角度转换成PI的方式
+#define  PROGREESS_WIDTH 80 //圆直径
+#define PROGRESS_LINE_WIDTH 4 //弧线的宽度
+
+
+#define rong_zi_introduction_txt @"     本服务有%@的封闭期，期间一般不允许用户退出。用户确实需要退出的，需支付紧急退出费（退出总资产的1.5%）。封闭期结束后，XXX将协助用户完成债权转让，并退出服务。正常退出，不需要支付任何退出费用。期间一般不允许用户退出。用户确实需要退出的，需支付紧急退出费（退出总资产的1.5%）。封闭期结束后，XXX将协助用户完成债权转让，并退出服务。正常退出，不需要支付任何退出费用。"
+
+#define ensure_txt  @"担保方介绍:\n     用户确实需要退出的，需支付紧急退出费（退出总资产的1.5%）。封闭期结束后，XXX将协助用户完成债权转让，并退出服务。正常退出，不需要支付任何退出费用。期间一般不允许用户退出。用户确实需要退出的，需支付紧急退出费（退出总资产的1.5%）。封闭期结束后，XXX将协助用户完成债权转让，并退出服务。正常退出，不需要支付任何退出费用。"
+
+
+//*100%代表扣除所有费用后,用户可以得到的预期收益率.(封闭期紧急退出的除外)*预期收益不代表实际收益,以实际收益为准。
+#define rate_description @"代表扣除所有费用后,用户可以得到的预期收益率.(封闭期紧急退出的除外)*预期收益不代表实际收益,以实际收益为准。"
+
+#define introduction_txt  @"“XXX”服务是xxx近期退出的全方位一站式的出借增值服务。投资标的是XXXP2P借款平台的精英标。"
+
+#define fee_txt           @"本服务有3个月的封闭期，期间一般不允许用户退出。用户确实需要退出的，需支付紧急退出费（退出总资产的1.5%）。封闭期结束后，XXX将协助用户完成债权转让，并退出服务。正常退出，不需要支付任何退出费用。"
+
+//整个屏幕的宽和高
+#define VIEW_WEIGHT [UIScreen mainScreen].bounds.size.width
+#define VIEW_HEIGHT (IOS_7 ?[UIScreen mainScreen].bounds.size.height :([UIScreen mainScreen].bounds.size.height-64))
+#define VIEW_HEIGHT_TAB ([UIScreen mainScreen].bounds.size.height-113)
+//有关适配
+#define Proportion ([UIScreen mainScreen].bounds.size.width/320)
+
+//控件的尺寸
+#define WIDTH_VIEW(view) CGRectGetWidth(view.frame)
+#define HEIGHT_VIEW(view) CGRectGetHeight(view.frame)
+#define VIEW_MAXX(view) CGRectGetMaxX(view.frame)
+#define VIEW_MAXY(view) CGRectGetMaxY(view.frame)
+
+#define VIEW_oringeY  (IOS_7 ? 64:0)
+
+
+#define RGBACOLOR(r,g,b,a) [UIColor colorWithRed:(r)/255.0f green:(g)/255.0f blue:(b)/255.0f alpha:(a)]
+#define HexRGBAlpha(rgbValue,a) [UIColor colorWithRed:((float)((rgbValue & 0xFF0000) >> 16))/255.0 green:((float)((rgbValue & 0xFF00) >> 8))/255.0 blue:((float)(rgbValue & 0xFF))/255.0 alpha:(a)]
+
+#define GXRandomColor [UIColor colorWithRed:arc4random_uniform(255)/255.0 green:arc4random_uniform(255)/255.0 blue:arc4random_uniform(255)/255.0 alpha:1]
+
+//接口
+#define MAINURL @"http://www.gmtxw06.com/index.php?"
+
+
+///index.php?g=home&m=credinfo&a=active_list
+
+#define URL_Index_huodong [MAINURL stringByAppendingString:[NSString stringWithFormat:@"g=home&m=credinfo&a=active_list"]]
+
+///index.php?g=home&m=credinfo&a=active_detail
+//INCLUDEPICTURE \d "C:\\Users\\xia\\Documents\\Tencent Files\\27330385\\Image\\C2C\\Y63H6{56PY3`7E4YPYDV`NM.jpg" \* MERGEFORMATINET
+#define URL_huodong_detail(id) [MAINURL stringByAppendingString:[NSString stringWithFormat:@"g=home&m=credinfo&a=active_detail&id=%@",id]]
+
+
+#define URL_Index [MAINURL stringByAppendingString:[NSString stringWithFormat:@"m=Product&a=isrem"]]
+//m=Product&a=index
+#define URL_all_tou_zi(start,eve) [MAINURL stringByAppendingString:[NSString stringWithFormat:@"m=Product&a=index&start=%d&eve=%d",start,eve]]
+//m=Product&a=search&month=6&keyword=3&page=1
+
+#define URL_Search(keyword,start,eve) [MAINURL stringByAppendingString:[NSString stringWithFormat:@"m=Product&a=search&keyword=%@&start=%d&eve=%d",keyword,start,eve]]
+
+
+//m=Product&a=detail&id=9
+#define URL_Product_Detail(productId) [MAINURL stringByAppendingString:[NSString stringWithFormat:@"m=Product&a=detail&id=%@",productId]]
+//m=Product&a=detailt&id=9
+#define URL_Product_Detail_info(productId) [MAINURL stringByAppendingString:[NSString stringWithFormat:@"m=Product&a=detailt&id=%@",productId]]
+
+#define URL_Product_Details_info(productId) [MAINURL stringByAppendingString:[NSString stringWithFormat:@"m=Product&a=detailts&id=%@",productId]]
+#define URL_Product_Detailss_info(productId) [MAINURL stringByAppendingString:[NSString stringWithFormat:@"m=Product&a=detailtss&id=%@",productId]]
+//m=Product&a=allinvest&id=9
+#define URL_Product_allinvest_info(productId) [MAINURL stringByAppendingString:[NSString stringWithFormat:@"m=Product&a=allinvest&id=%@",productId]]
+//m=Product&a=buyproduct
+#define URL_Buy_Now [MAINURL stringByAppendingString:[NSString stringWithFormat:@"m=Product&a=buyproduct"]]
+
+#endif

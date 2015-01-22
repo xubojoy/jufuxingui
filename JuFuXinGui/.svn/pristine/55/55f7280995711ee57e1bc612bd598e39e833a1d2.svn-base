@@ -1,0 +1,26 @@
+//
+//  CenterClassifyView.m
+//  JuFuXinGui
+//
+//  Created by myStyle on 14-12-30.
+//  Copyright (c) 2014年 XB. All rights reserved.
+//
+
+#import "CenterClassifyView.h"
+
+@implementation CenterClassifyView
+
+- (id)initWithFrame:(CGRect)frame
+{
+    self = [super initWithFrame:frame];
+    if (self) {
+        // Initialization code
+        self = [[[NSBundle mainBundle]loadNibNamed:@"CenterClassifyView" owner:self options:nil] objectAtIndex:0];
+        self.frame = frame;
+    }
+    return self;
+}
+
+- (IBAction)tapBtnClick:(id)sender{
+}
+@end

@@ -1,0 +1,191 @@
+//
+//  ProjectViewController.m
+//  JuFuXinGui
+//
+//  Created by mac on 14/12/30.
+//  Copyright (c) 2014年 XB. All rights reserved.
+//
+
+#import "ProjectViewController.h"
+#import "HAN_Constants.h"
+#import "AttributedLabel.h"
+#import "MJRefresh.h"
+#define time_label_tag  10010
+#define zong_tag        10020
+#define mei_tag         10030
+@interface ProjectViewController ()
+{
+    NSMutableArray * timearray;
+    NSMutableArray * dataarray;
+    int all;
+    int addpage;
+}
+@end
+
+@implementation ProjectViewController
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    addpage=1;
+    timearray=[[NSMutableArray alloc]initWithCapacity:0];
+    dataarray=[[NSMutableArray alloc]initWithCapacity:0];
+    self.user=[UserModel shareuser];
+    [self initview];
+    [self.tableview headerBeginRefreshing];
+    self.view.frame=[UIScreen mainScreen].bounds;
+    // Do any additional setup after loading the view from its nib.
+}
+-(void)initview{
+   self.tableview=[[UITableView alloc]initWithFrame:CGRectMake(0, 0, screen_width,Screen_height-60)];
+    self.tableview.delegate=self;
+    self.tableview.dataSource=self;
+    self.tableview.rowHeight=60;
+    self.tableview.tableFooterView=[self tableviewheader];
+    [self.tableview addHeaderWithTarget:self action:@selector(headerRereshing)];
+    [self.tableview addFooterWithTarget:self action:@selector(footerRereshing)];
+    [self.view addSubview:self.tableview];
+}
+-(void)headerRereshing{
+    if (dataarray.count>=0) {
+        [dataarray removeAllObjects];
+    }
+        addpage=1;
+    [self getadata:addpage];
+    
+}
+-(void)footerRereshing{
+    if (addpage>=all) {
+        self.morelabel.text=@"没有加载更多了";
+        
+    }else{
+        addpage++;
+        [self getadata:addpage];
+    }
+   
+}
+-(void)getadata:(int)page{
+    
+    __weak ProjectViewController * weeksafa = self;
+    HAN_HttpRequest * request=[HAN_HttpRequest defaultRequest];
+    [request getjihuaDataWithpage:page token:self.user.token SuccessBlock:^(id data) {
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+            dispatch_async(dispatch_get_main_queue(), ^{
+                
+                NSDictionary * dic=(NSDictionary *)data;
+                [weeksafa chulidata:dic];
+                [weeksafa.tableview footerEndRefreshing];
+                [weeksafa.tableview headerEndRefreshing];
+            });
+        });
+        
+        
+        
+    } WithFailBlock:^(NSError *error) {
+        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+            dispatch_async(dispatch_get_main_queue(), ^{
+                
+                [weeksafa.tableview footerEndRefreshing];
+                [weeksafa.tableview headerEndRefreshing];
+            });
+        });
+        
+    }];
+}
+-(void)chulidata:(NSDictionary *)dic{
+    
+    if ([[dic objectForKey:@"code"]isEqualToString:@"01"]) {
+        
+        NSLog(@"code%@",dic);
+        all=[[dic objectForKey:@"page"] intValue];
+        NSArray * array=[dic objectForKey:@"result"];
+        for (int i=0; i<array.count; i++) {
+            HuiKuanJiHuaModel * model=[[HuiKuanJiHuaModel alloc]init];
+            model.month=[[array objectAtIndex:i] objectForKey:@"month"];
+            model.money=[[array objectAtIndex:i] objectForKey:@"money"];
+            [dataarray addObject:model];
+           //model.page
+        }
+        
+    }else if([[dic objectForKey:@"code"] isEqualToString:@"00"]){
+        self.morelabel.text=@"没有数据";
+    }
+    
+    [self.tableview reloadData];
+}
+-(UIView *)tableviewheader{
+    UIView * view=[[UIView alloc]initWithFrame:CGRectMake(0, 0, Screen_weight, 50)];
+    view.backgroundColor=[UIColor whiteColor];
+    self.morelabel=[[UILabel alloc]initWithFrame:CGRectMake(0, 0, Screen_weight, 50)];
+    self.morelabel.textColor=RGBACOLOR(219, 219, 219,1);
+    self.morelabel.text=@"加载更多";
+    self.morelabel.textAlignment=NSTextAlignmentCenter;
+    [view addSubview:self.morelabel];
+    return view;
+}
+#pragma mark @required
+
+
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
+    return dataarray.count;
+}
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
+    static NSString *cellIdentifier = @"cellll";
+    UITableViewCell * cell=[tableView dequeueReusableCellWithIdentifier:cellIdentifier];
+    if (!cell) {
+        cell=[[UITableViewCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
+        UILabel * timelabel=[[UILabel alloc]initWithFrame:CGRectMake(10,0,120,30)];
+        timelabel.tag=time_label_tag;
+        [cell addSubview:timelabel];
+        AttributedLabel * label=[[AttributedLabel alloc]initWithFrame:CGRectMake(10,timelabel.frame.size.height,Screen_weight-20,30)];
+        label.tag=zong_tag;
+        [cell addSubview:label];
+        AttributedLabel * label1=[[AttributedLabel alloc]initWithFrame:CGRectMake(10, label.frame.size.height+label.frame.origin.y, Screen_weight-20, 30)];
+        label1.tag=mei_tag;
+        
+        UILabel * linlabel=[[UILabel alloc]initWithFrame:CGRectMake(0,59, cell.frame.size.width,1)];
+        linlabel.backgroundColor=[UIColor lightGrayColor];
+        [cell addSubview:linlabel];
+       //[cell addSubview:label1];
+    }
+    UILabel * label1=(UILabel *)[cell viewWithTag:time_label_tag];
+    
+    AttributedLabel * label2=(AttributedLabel *)[cell viewWithTag:zong_tag];
+    
+        if (label1.text!=nil) {
+            while ([cell.contentView.subviews lastObject] !=nil) {
+                [(UIView*)[cell.contentView.subviews lastObject] removeFromSuperview];
+            }
+        }
+    label1.text=@"";
+    label2.text=@"";
+    //AttributedLabel * label3=(AttributedLabel *)[cell viewWithTag:mei_tag];
+    HuiKuanJiHuaModel * model=[dataarray objectAtIndex:indexPath.row];
+    label1.text=model.month;
+    //@"6月后回款总额：¥2233"
+    label2.text=[NSString stringWithFormat:@"%@汇款总额¥%@",model.month,model.money];
+    [label2 setColor:[UIColor redColor] fromIndex:0 length:label2.text.length];
+    [label2 setColor:[UIColor lightGrayColor] fromIndex:0 length:model.month.length+4];
+    [label2 setFont:[UIFont systemFontOfSize:14] fromIndex:0 length:label2.text.length];
+//    label3.text=@"总计：每月汇款总额：¥4635";
+//    [label3 setFont:[UIFont systemFontOfSize:14] fromIndex:0 length:label3.text.length];
+//    [label3 setColor:[UIColor redColor] fromIndex:0 length:label3.text.length];
+//     [label3 setColor:[UIColor lightGrayColor] fromIndex:0 length:10];
+
+    return cell;
+};
+- (void)didReceiveMemoryWarning {
+    [super didReceiveMemoryWarning];
+    // Dispose of any resources that can be recreated.
+}
+
+/*
+#pragma mark - Navigation
+
+// In a storyboard-based application, you will often want to do a little preparation before navigation
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    // Get the new view controller using [segue destinationViewController].
+    // Pass the selected object to the new view controller.
+}
+*/
+
+@end

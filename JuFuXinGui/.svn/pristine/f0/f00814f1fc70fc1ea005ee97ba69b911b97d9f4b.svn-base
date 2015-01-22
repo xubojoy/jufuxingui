@@ -1,0 +1,18 @@
+//
+//  UserModel.h
+//  JuFuXinGui
+//
+//  Created by mac on 14/12/31.
+//  Copyright (c) 2014年 XB. All rights reserved.
+//
+
+#import <Foundation/Foundation.h>
+
+@interface UserModel : NSObject
+@property(nonatomic,assign)BOOL isLoad;
+@property (nonatomic,assign)BOOL isgesture;
+@property (nonatomic,strong)NSString * token;
+@property(nonatomic,strong)NSString * userName;
++(id)shareuser;
+-(void)goout;
+@end

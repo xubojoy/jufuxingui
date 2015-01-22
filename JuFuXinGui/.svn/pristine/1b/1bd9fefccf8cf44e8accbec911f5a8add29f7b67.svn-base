@@ -1,0 +1,54 @@
+//
+//  InvestmentCell.m
+//  JuFuXinGui
+//
+//  Created by myStyle on 14-12-19.
+//  Copyright (c) 2014年 XB. All rights reserved.
+//
+
+#import "InvestmentCell.h"
+
+@implementation InvestmentCell
+
+- (void)awakeFromNib {
+    // Initialization code
+    self.statusLabel.frame = CGRectMake(VIEW_WEIGHT-55, 6, 40, 16);
+    self.statusLabel.backgroundColor = RGBACOLOR(244, 66, 71, 1);
+    
+    self.moreBtn.backgroundColor = [UIColor greenColor];
+    
+    CGRect moreBtnFrame = self.moreBtn.frame;
+    CGRect fengBIQiLabelFrame = self.fengBIQiTitle.frame;
+    CGRect qiTouZiJinLabelFrame = self.qiTouZiJinTitle.frame;
+    CGRect fenBiLabFrame = self.fenBiLab.frame;
+    CGRect qiTouAmountLabFrame = self.qiTouAmountLab.frame;
+    
+    moreBtnFrame.origin.x = (screen_width-30)/2;
+    fengBIQiLabelFrame.origin.x = (screen_width-100)/2;
+    qiTouZiJinLabelFrame.origin.x = screen_width-general_margin-100;
+    fenBiLabFrame.origin.x = (screen_width-100)/2;
+    qiTouAmountLabFrame.origin.x = screen_width-general_margin-100;
+    
+    self.moreBtn.frame = moreBtnFrame;
+    self.fengBIQiTitle.frame = fengBIQiLabelFrame;
+    self.qiTouZiJinTitle.frame = qiTouZiJinLabelFrame;
+    self.fenBiLab.frame = fenBiLabFrame;
+    self.qiTouAmountLab.frame = qiTouAmountLabFrame;
+
+    self.exceptYearRate.textColor = [UIColor redColor];
+    self.fenBiLab.textColor = [UIColor redColor];
+    self.qiTouAmountLab.textColor = [UIColor redColor];
+ 
+}
+
+- (void)setSelected:(BOOL)selected animated:(BOOL)animated {
+    [super setSelected:selected animated:animated];
+
+    // Configure the view for the selected state
+}
+
+- (IBAction)moreBtnClick:(UIButton *)sender {
+    
+    
+}
+@end

@@ -1,0 +1,31 @@
+//
+//  ItemDetailView.h
+//  JuFuXinGui
+//
+//  Created by myStyle on 14-12-26.
+//  Copyright (c) 2014年 XB. All rights reserved.
+//
+
+#import <UIKit/UIKit.h>
+
+@interface ItemDetailView : UIView
+
+@property (weak, nonatomic) IBOutlet UILabel *expectRateLab;
+@property (weak, nonatomic) IBOutlet UILabel *expectStartTimeLab;
+@property (weak, nonatomic) IBOutlet UILabel *closedPeriodLab;
+@property (strong, nonatomic) IBOutlet UILabel *remianAmountLab;
+@property (strong, nonatomic) IBOutlet UILabel *minInvestLab;
+@property (strong, nonatomic) IBOutlet UILabel *singleMaxAmountLab;
+
+@property (weak, nonatomic) IBOutlet UIView *upLine;
+@property (weak, nonatomic) IBOutlet UIView *midLine;
+@property (weak, nonatomic) IBOutlet UIView *midLine2;
+@property (weak, nonatomic) IBOutlet UIView *downLine;
+
+@property (weak, nonatomic) IBOutlet UILabel *label1;
+@property (weak, nonatomic) IBOutlet UILabel *label2;
+@property (weak, nonatomic) IBOutlet UILabel *label3;
+
+-(void)renderItemViewWithDic:(NSDictionary *)dic;
+
+@end

@@ -1,0 +1,22 @@
+//
+//  CashViewController.h
+//  JuFuXinGui
+//
+//  Created by mac on 14/12/29.
+//  Copyright (c) 2014年 XB. All rights reserved.
+//
+
+#import <UIKit/UIKit.h>
+#import "UserModel.h"
+@interface CashViewController : UIViewController<UITextFieldDelegate>
+@property (nonatomic, strong) HeaderView *header;
+@property (nonatomic,strong)UITextField * cashfield;
+@property (nonatomic,strong)UITextField * rcachfield;
+@property (nonatomic,strong)UserModel * user;
+/*
+ yes是充值
+ no是提现
+ */
+@property (nonatomic,assign)BOOL chongzhi_or_tixian;
+
+@end

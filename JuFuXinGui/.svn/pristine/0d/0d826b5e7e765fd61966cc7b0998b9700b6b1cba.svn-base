@@ -1,0 +1,29 @@
+//
+//  UserModel.h
+//  JuFuXinGui
+//
+//  Created by mac on 14/12/31.
+//  Copyright (c) 2014年 XB. All rights reserved.
+//
+
+#import <Foundation/Foundation.h>
+
+@interface UserModel : NSObject
+@property (nonatomic,assign)BOOL isLoad;
+@property (nonatomic,assign)BOOL isgesture;
+@property (nonatomic,strong)NSString * token;
+@property (nonatomic,strong)NSString * userName;
+@property (nonatomic,strong)NSString * userid;
+@property (nonatomic,strong)NSString * idcard;
+@property (nonatomic,strong)NSString * sex;
+@property (nonatomic,strong)NSString * truename;
+@property (nonatomic,strong)NSString * money;
+@property (nonatomic,strong)NSMutableArray * zijingArray;
+@property (nonatomic,strong)NSMutableArray * touziArray;
+@property (nonatomic,strong)NSMutableArray * huikuanArray;
+@property (nonatomic,strong)NSMutableArray * myincomArray;
+@property (nonatomic,strong)NSString *pwd;//只在注册时候用
++(UserModel *)shareuser;
+-(void)goout;
+-(void)zhanghu;
+@end

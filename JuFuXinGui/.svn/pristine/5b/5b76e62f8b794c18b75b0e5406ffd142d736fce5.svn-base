@@ -1,0 +1,14 @@
+//
+//  MyInComeModel.h
+//  JuFuXinGui
+//
+//  Created by mac on 15/1/9.
+//  Copyright (c) 2015年 XB. All rights reserved.
+//
+
+#import <Foundation/Foundation.h>
+
+@interface MyInComeModel : NSObject
+@property (nonatomic,strong)NSString *addtime;
+@property (nonatomic,strong)NSString *earn;
+@end

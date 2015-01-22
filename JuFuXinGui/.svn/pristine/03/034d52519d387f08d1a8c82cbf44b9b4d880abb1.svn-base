@@ -1,0 +1,157 @@
+//
+//  RecommendDetailViewController.m
+//  JuFuXinGui
+//
+//  Created by xubojoy on 14/12/26.
+//  Copyright (c) 2014年 XB. All rights reserved.
+//
+
+#import "RecommendDetailViewController.h"
+#import "Macro.h"
+@interface RecommendDetailViewController ()
+
+@end
+
+@implementation RecommendDetailViewController
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    self.view.backgroundColor = RGBACOLOR(240, 240, 240, 1);
+    [self setRightSwipeGesture];
+    [self initHeader];
+    [self initTableView];
+}
+
+#pragma mark - 头部相关
+//初始化头部
+- (void)initHeader{
+    //初始化布局与背景
+    self.header  = [[HeaderView alloc] initWithTitle:@"推荐项目详情" navigationController:self.navigationController];
+    self.header.backBut.hidden = NO;
+    [self.view addSubview:self.header];
+}
+
+//初始化tableView
+-(void)initTableView{
+    self.tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, self.header.frame.size.height, screen_width, VIEW_HEIGHT-self.header.frame.size.height) style:UITableViewStylePlain];
+    self.tableView.delegate = self;
+    self.tableView.dataSource = self;
+    self.tableView.backgroundColor = RGBACOLOR(240, 240, 240, 1);
+    self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
+    [self.view addSubview:self.tableView];
+}
+
+#pragma mark - UITbaleViewDelegate
+
+-(NSInteger)numberOfSectionsInTableView:(UITableView *)tableView{
+    return 5;
+}
+
+-(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
+    return 1;
+}
+
+-(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
+    
+    if (indexPath.section == 0) {
+        static NSString *topIdentifier = @"topCell";
+        TopViewCell *cell = [tableView dequeueReusableCellWithIdentifier:topIdentifier];
+        if (!cell) {
+            cell = [[TopViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:topIdentifier];
+        }
+        cell.selectionStyle = UITableViewCellSelectionStyleNone;
+        return cell;
+    }else if (indexPath.section == 1){
+        static NSString *exceptIdentifier = @"exceptCell";
+        ExceptYearRateCell *cell = [tableView dequeueReusableCellWithIdentifier:exceptIdentifier];
+        if (!cell) {
+            cell = [[ExceptYearRateCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:exceptIdentifier];
+        }
+        cell.selectionStyle = UITableViewCellSelectionStyleNone;
+        return cell;
+    }
+    else if(indexPath.section == 2){
+        static NSString *identifier = @"cell";
+        UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:identifier];
+        if (!cell) {
+            cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier];
+        }
+        cell.selectionStyle = UITableViewCellSelectionStyleNone;
+        NSString *content =rate_description;
+        CommonItemTxt *item1 = [[CommonItemTxt alloc]init:1 title:nil content:content];
+        UIFont *font = [UIFont systemFontOfSize:14];
+        NSArray *array = [NSArray arrayWithObjects:item1, nil];
+        
+        float height = [CommonItemTxtView judgeHeight:array font:font]+2*general_margin;
+        CGRect frame = CGRectMake(general_margin, 0, screen_width - 2*general_margin, height);
+        
+        self.descriptionView = [[CommonItemTxtView alloc] initWithFrame:frame
+                                                                 commonItemTxtArray:array
+                                                                               font:font];
+        [cell.contentView addSubview:self.descriptionView];
+        return cell;
+    }else if (indexPath.section == 3){
+        static NSString *introductionIdentifier = @"introCell";
+        UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:introductionIdentifier];
+        if (!cell) {
+            cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:introductionIdentifier];
+        }
+        cell.selectionStyle = UITableViewCellSelectionStyleNone;
+        NSString *content = introduction_txt;
+        CommonItemTxt *item1 = [[CommonItemTxt alloc]init:1 title:@"服务介绍" content:content];
+        UIFont *font = [UIFont systemFontOfSize:14];
+        NSArray *array = [NSArray arrayWithObjects:item1, nil];
+        
+        float height = [CommonItemTxtView judgeHeight:array font:font]+2*general_margin;
+        CGRect frame = CGRectMake(general_margin, 0, screen_width - 2*general_margin, height);
+        
+        self.descriptionView = [[CommonItemTxtView alloc] initWithFrame:frame
+                                                     commonItemTxtArray:array
+                                                                   font:font];
+        [cell.contentView addSubview:self.descriptionView];
+        return cell;
+
+    
+    }else if (indexPath.section == 4){
+        static NSString *feeIdentifier = @"feeCell";
+        UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:feeIdentifier];
+        if (!cell) {
+            cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:feeIdentifier];
+        }
+        cell.selectionStyle = UITableViewCellSelectionStyleNone;
+        NSString *content =fee_txt;
+        CommonItemTxt *item1 = [[CommonItemTxt alloc]init:1 title:@"封闭期，开放期和退出费用" content:content];
+        UIFont *font = [UIFont systemFontOfSize:14];
+        NSArray *array = [NSArray arrayWithObjects:item1, nil];
+        
+        float height = [CommonItemTxtView judgeHeight:array font:font]+2*general_padding;
+        CGRect frame = CGRectMake(general_margin, 0, screen_width - 2*general_margin, height);
+        
+        self.descriptionView = [[CommonItemTxtView alloc] initWithFrame:frame
+                                                     commonItemTxtArray:array
+                                                                   font:font];
+        [cell.contentView addSubview:self.descriptionView];
+        return cell;
+    }
+    return nil;
+}
+
+-(CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section{
+    if (section == 0) {
+        return 0;
+    }
+
+    return 10;
+
+}
+
+-(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
+    if (indexPath.section == 0) {
+        return 60;
+    }else if (indexPath.section == 1){
+        return 95;
+    }
+    return self.descriptionView.frame.size.height;;
+}
+
+@end

@@ -1,0 +1,224 @@
+//
+//  HeadImageViewController.m
+//  JuFuXinGui
+//
+//  Created by mac on 15/1/12.
+//  Copyright (c) 2015年 XB. All rights reserved.
+//
+
+#import "HeadImageViewController.h"
+#import "HAN_Constants.h"
+#import "Han_NoteTableViewCell.h"
+#import "NTViewController.h"
+
+@interface HeadImageViewController ()
+
+@end
+
+@implementation HeadImageViewController
+- (void)viewDidLoad
+{
+    [super viewDidLoad];
+    self.user=[UserModel shareuser];
+    self.tableview.backgroundColor=RGBACOLOR(232, 232, 232, 1);
+    self.view.backgroundColor=[UIColor whiteColor];
+    [self setRightSwipeGesture];
+    [self initHeader];
+    [self initbody];
+    //Do any additional setup after loading the view from its nib.
+}
+
+-(void)viewWillAppear:(BOOL)animated{
+    [super viewWillAppear:animated];
+    [[NTViewController sharedController] hidesTabBar:YES animated:YES];
+}
+#pragma mark - 头部相关
+//初始化头部
+- (void)initHeader{
+    //初始化布局与背景
+    self.header  = [[HeaderView alloc] initWithTitle:@"我的消息" navigationController:self.navigationController];
+    self.header.backBut.hidden = NO;
+    [self.view addSubview:self.header];
+    // [self addback];
+    
+}
+-(void)addback{
+    UIButton * btn=[UIButton buttonWithType:UIButtonTypeCustom];
+    btn.frame=CGRectMake(10,24,20,20);
+    [btn setBackgroundImage:[UIImage imageNamed:@"top_return"] forState:UIControlStateNormal];
+    
+    [btn addTarget:self action:@selector(popToFrontViewController:) forControlEvents:UIControlEventTouchUpInside];
+    [self.header addSubview:btn];
+    
+}
+-(void)initbody{
+    self.tableview=[[UITableView alloc]initWithFrame:CGRectMake(0,self.header.frame.size.height+20, Screen_weight,130) style:UITableViewStyleGrouped];
+    self.tableview.separatorStyle=UITableViewCellSeparatorStyleNone;
+    self.tableview.rowHeight=44;
+    self.tableview.scrollEnabled=NO;
+    self.tableview.delegate=self;
+    self.tableview.dataSource=self;
+    [self.view addSubview:self.tableview];
+    
+    self.imageView=[[UIImageView alloc]initWithFrame:CGRectMake(20, self.tableview.frame.size.height+self.tableview.frame.origin.y+10,100,100)];
+    self.imageView.layer.cornerRadius=50;
+    self.imageView.center=CGPointMake(self.view.center.x, self.view.center.y);
+    if (self.user.userimage==nil) {
+        
+    }
+    
+    self.imageView.layer.masksToBounds=YES;
+    [self.view addSubview:self.imageView];
+    UIButton * button=[UIButton buttonWithType:UIButtonTypeCustom];
+    self.buttoniamge=button;
+    button.userInteractionEnabled=NO;
+    [button addTarget:self action:@selector(upimage:) forControlEvents:UIControlEventTouchUpInside];
+    button.frame=CGRectMake(10,self.imageView.frame.size.height+self.imageView.frame.origin.y+20,Screen_weight-20, 50);
+    self.imageView.center=CGPointMake(self.buttoniamge.center.x, self.view.center.y);
+    [button setTitle:@"上传" forState:UIControlStateNormal];
+    [button setBackgroundColor:[UIColor lightGrayColor]];
+    [self.view addSubview:button];
+}
+-(void)upimage:(UIButton *)sender{
+    [self getalert];
+    
+}
+-(void)getalert{
+    UIAlertView * alertview=[[UIAlertView alloc]initWithTitle:@"温馨提示" message:@"您确定要上传吗" delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"上传", nil];
+    [alertview show];
+}
+
+#pragma mark UIAlertViewDelegate
+- (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex{
+    if (buttonIndex==0) {
+        NSLog(@"取消");
+    }else
+    {
+        NSLog(@"上传");
+        [self upimage];
+    }
+}
+
+#pragma mark 图像上传
+-(void)upimage{
+    
+
+    NSData *data = UIImagePNGRepresentation(self.imageView.image);
+    NSDictionary * dic=[[NSDictionary alloc]initWithObjectsAndKeys:self.user.token,@"token",@"2",@"st",nil];
+    HAN_HttpRequest * requsert=[HAN_HttpRequest defaultRequest];
+    [requsert upDataWithpage:dic nsdata:data SuccessBlock:^(id data) {
+        
+        
+        
+    } WithFailBlock:^(NSError *error) {
+        
+    }];
+}
+
+#pragma mark UITableViewDataSource @required
+
+
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
+    return 1;
+}
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView{
+    return 2;
+}
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
+    static NSString * Identifier=@"Identifier";
+    UITableViewCell * cell=[tableView dequeueReusableCellWithIdentifier:Identifier];
+    if (!cell) {
+        cell=[[UITableViewCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:Identifier];
+        cell.selectionStyle=UITableViewCellSelectionStyleNone;
+        //cell.layer.borderWidth=2;
+        //cell.layer.borderColor=[UIColor lightGrayColor].CGColor;
+        //cell.layer.masksToBounds=YES;
+        UILabel * uplibel=[[UILabel alloc]initWithFrame:CGRectMake(0,0, Screen_weight, 0.5)];
+        uplibel.backgroundColor=[UIColor lightGrayColor];
+         UILabel * liabel=[[UILabel alloc]initWithFrame:CGRectMake(0, cell.frame.size.height-0.5, Screen_weight, 0.5)];
+        liabel.backgroundColor=[UIColor lightGrayColor];
+        [cell addSubview:uplibel];
+        [cell addSubview:liabel];
+        
+    }
+    if (indexPath.section==1) {
+        cell.textLabel.text=@"去相册中找";
+    }else{
+        cell.textLabel.text=@"去照相机";
+    }
+    return cell;
+}
+//-(CGFloat)tableView:(UITableView *)tableView estimatedHeightForHeaderInSection:(NSInteger)section{
+//    return 2.5;
+//}
+-(CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section{
+    return 5;
+}
+-(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
+    if (indexPath.section==0) {
+        NSLog(@"照相");
+    
+        
+    }else{
+        NSLog(@"相册中");
+        UIImagePickerController *picker = [[UIImagePickerController  alloc] init];
+        //设置相片的来源：相册或者相机
+        picker.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
+        picker.delegate = self;
+        
+        __weak HeadImageViewController * weeksafa=self;
+        [self presentViewController:picker animated:YES completion:^{
+            if (weeksafa.imageView.image!=nil) {
+                weeksafa.buttoniamge.backgroundColor=[UIColor blueColor];
+                weeksafa.buttoniamge.userInteractionEnabled=YES;
+            }
+            NSLog(@"模态弹出成功");
+        }];
+    }
+}
+//选中图片
+-(void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info
+{
+    //得到选中的图片，显示出来
+    self.imageView.image = [info objectForKey:UIImagePickerControllerOriginalImage];
+    if (self.imageView.image!=nil) {
+        self.buttoniamge.backgroundColor=[UIColor blueColor];
+        self.buttoniamge.userInteractionEnabled=YES;
+    }
+    [picker dismissViewControllerAnimated:YES completion:nil];
+}
+
+//取消选取
+-(void)imagePickerControllerDidCancel:(UIImagePickerController *)picker
+{
+    [picker dismissViewControllerAnimated:YES completion:nil];
+}
+//- (void)connection:(NSURLConnection *)connection   didSendBodyData:(NSInteger)bytesWritten
+// totalBytesWritten:(NSInteger)totalBytesWritten
+//totalBytesExpectedToWrite:(NSInteger)totalBytesExpectedToWrite
+//{
+//    NSLog(@"一次上传的大小 %ld,累计已经上传的大小 %ld总共需要上传的大小 %ld",(long)bytesWritten, (long)totalBytesWritten, (long)totalBytesExpectedToWrite);
+//    NSLog(@"");
+//}
+//
+//-(void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data
+//{
+//    NSString *responseString = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+//    NSLog(@"上传结果--->%@", responseString);
+//}
+- (void)didReceiveMemoryWarning {
+    [super didReceiveMemoryWarning];
+    // Dispose of any resources that can be recreated.
+}
+
+/*
+#pragma mark - Navigation
+
+// In a storyboard-based application, you will often want to do a little preparation before navigation
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    // Get the new view controller using [segue destinationViewController].
+    // Pass the selected object to the new view controller.
+}
+*/
+
+@end

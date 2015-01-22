@@ -1,0 +1,46 @@
+//
+//  ActivityViewController.m
+//  JuFuXinGui
+//
+//  Created by myStyle on 14-12-29.
+//  Copyright (c) 2014年 XB. All rights reserved.
+//
+
+#import "ActivityViewController.h"
+
+@interface ActivityViewController ()
+
+@end
+
+@implementation ActivityViewController
+
+-(void)viewWillAppear:(BOOL)animated{
+
+    [super viewWillAppear:animated];
+    [[NTViewController sharedController] hidesTabBar:YES animated:YES];
+
+}
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    self.view.backgroundColor = view_bg_color;
+    [self setRightSwipeGesture];
+    [self initHeader];
+}
+
+#pragma mark - 头部相关
+//初始化头部
+- (void)initHeader{
+    //初始化布局与背景
+    self.header  = [[HeaderView alloc] initWithTitle:@"品牌活动介绍" navigationController:self.navigationController];
+//    self.header.backBut.hidden = NO;
+    [self.view addSubview:self.header];
+}
+
+- (void)didReceiveMemoryWarning {
+    [super didReceiveMemoryWarning];
+    // Dispose of any resources that can be recreated.
+}
+
+
+@end

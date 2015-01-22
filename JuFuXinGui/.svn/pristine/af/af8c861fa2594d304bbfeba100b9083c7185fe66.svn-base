@@ -1,0 +1,68 @@
+//
+//  MyIncomeViewController.m
+//  JuFuXinGui
+//
+//  Created by mac on 14/12/30.
+//  Copyright (c) 2014年 XB. All rights reserved.
+//
+
+#import "MyIncomeViewController.h"
+
+@interface MyIncomeViewController ()
+
+@end
+
+@implementation MyIncomeViewController
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    self.view.frame=[UIScreen mainScreen].bounds;
+    [self initview];
+    // Do any additional setup after loading the view from its nib.
+}
+-(void)initview{
+    self.tableview=[[UITableView alloc]initWithFrame:CGRectMake(0, 0, screen_width, 100)];
+    self.tableview.delegate=self;
+    self.tableview.dataSource=self;
+    [self.view addSubview:self.tableview];
+}
+#pragma mark UITableViewDataSource @required
+
+
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
+    return 2;
+}
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
+    static NSString *cellIdentifier = @"celllll";
+    UITableViewCell * cell=[tableView dequeueReusableCellWithIdentifier:cellIdentifier];
+    if (!cell) {
+        cell=[[UITableViewCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
+        UILabel * timelabel=[[UILabel alloc]initWithFrame:CGRectMake(screen_width-150,0,140, 40)];
+        timelabel.textAlignment=NSTextAlignmentRight;
+        timelabel.tag=10101;
+        timelabel.textColor=[UIColor redColor];
+        [cell addSubview:timelabel];
+       
+    }
+    UILabel * label=(UILabel *)[cell viewWithTag:10101];
+    label.text=@"¥300";
+    cell.textLabel.text=@"10月";
+    return cell;
+}
+
+- (void)didReceiveMemoryWarning {
+    [super didReceiveMemoryWarning];
+    // Dispose of any resources that can be recreated.
+}
+
+/*
+#pragma mark - Navigation
+
+// In a storyboard-based application, you will often want to do a little preparation before navigation
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    // Get the new view controller using [segue destinationViewController].
+    // Pass the selected object to the new view controller.
+}
+*/
+
+@end

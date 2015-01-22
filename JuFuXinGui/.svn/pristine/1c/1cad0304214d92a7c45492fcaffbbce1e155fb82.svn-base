@@ -1,0 +1,212 @@
+//
+//  MyNBTabController.m
+//  NB2
+//
+//  Created by kohn on 13-11-16.
+//  Copyright (c) 2013年 Kohn. All rights reserved.
+//
+
+#import "RecomIndexViewController.h"
+#import "RecommendViewController.h"
+#import "ShareSDKProcessor.h"
+#import "ShareContent.h"
+#import "ActivityViewController.h"
+
+#define ARC4RANDOM_MAX 0x100000000
+@interface RecomIndexViewController ()
+
+@end
+
+@implementation RecomIndexViewController
+
+- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
+{
+    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
+    if (self) {
+        self.view.backgroundColor = [UIColor whiteColor];
+        // Custom initialization
+        
+    }
+    return self;
+}
+
+- (void)viewWillAppear:(BOOL)animated{
+    [super viewWillAppear:animated];
+    self.navigationController.navigationBarHidden = YES;
+    [self.mainScorllView.animationTimer resumeTimer];
+    [[NTViewController sharedController] hidesTabBar:NO animated:NO];
+    [self initHeader];
+    [self initUIView];
+    [self initBtn];
+    [self initScrollView];
+    [self initCircleView];
+    [self initDescriptionLab];
+    [self loadIndexData];
+}
+
+- (void)viewDidLoad
+{
+    [super viewDidLoad];
+    self.titleArray = [[NSMutableArray alloc] initWithObjects:@"封闭期",@"年化收益",@"起投金额", nil];
+}
+
+//加载数据
+-(void)loadIndexData{
+    [MBHUDView hudWithBody:@"正在加载..." type:MBAlertViewHUDTypeActivityIndicator hidesAfter:30 show:YES];
+    NSString *url = URL_Index;
+    JSHttpRequest *request = [[JSHttpRequest alloc] init];
+    
+    [request StartWorkWithUrlstr:url];
+    request.successGetData = ^(id obj){
+        [MBHUDView dismissCurrentHUD];
+        NSLog(@">>>>>>obj>>>>>>>%@",obj);
+        NSString *code = [obj valueForKey:@"code"];
+        if ([code isEqualToString:@"01"]) {
+            NSArray *array = [obj valueForKey:@"result"];
+            self.dataDic = [array objectAtIndex:0];
+           NSString *timelong = [self.dataDic valueForKey:@"timelong"];
+           NSString *interestrates = [self.dataDic valueForKey:@"interestrates"];
+           NSString *minmoney = [self.dataDic valueForKey:@"minmoney"];
+            self.contentArray = [[NSMutableArray alloc] initWithObjects:timelong,interestrates,minmoney, nil];
+            [self initCenterClassifyView];
+            NSLog(@">>>>>>contentArray>>>>>>>%@",self.contentArray);
+        }
+    };
+    request.failureGetData = ^(id obj){
+        NSLog(@">>>>>>>>>>>>>加载失败");
+        
+    };
+}
+
+
+#pragma mark - 头部相关
+//初始化头部
+- (void)initHeader{
+    //初始化布局与背景
+    self.header  = [[HeaderView alloc] initWithTitle:@"推荐项目" navigationController:self.navigationController];
+    self.header.backBut.hidden = YES;
+    [self.view addSubview:self.header];
+}
+
+-(void)initUIView{
+    self.scrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(0, self.header.frame.size.height, screen_width, VIEW_HEIGHT-self.header.frame.size.height-49)];
+    self.scrollView.backgroundColor = RGBACOLOR(230, 241, 255, 1);
+    self.scrollView.contentSize = CGSizeMake(screen_width, VIEW_HEIGHT);
+    self.scrollView.userInteractionEnabled = YES;
+    self.scrollView.showsVerticalScrollIndicator = NO;
+    [self.view addSubview:self.scrollView];
+}
+
+//初始化自动轮播视图
+-(void)initScrollView{
+    NSMutableArray *viewsArray = [@[] mutableCopy];
+    NSArray *colorArray = @[[UIColor cyanColor],[UIColor blueColor],[UIColor greenColor],[UIColor yellowColor],[UIColor purpleColor]];
+    for (int i = 0; i < 5; ++i) {
+        UILabel *tempLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, VIEW_WEIGHT, 150)];
+        tempLabel.text = @"春运票荒！！！";
+        tempLabel.textAlignment = NSTextAlignmentCenter;
+        tempLabel.backgroundColor = [(UIColor *)[colorArray objectAtIndex:i] colorWithAlphaComponent:0.5];
+        [viewsArray addObject:tempLabel];
+    }
+    self.mainScorllView = [[CycleScrollView alloc] initWithFrame:CGRectMake(0, 0, VIEW_WEIGHT, 150) animationDuration:2];
+    self.mainScorllView.backgroundColor = [[UIColor purpleColor] colorWithAlphaComponent:0];
+    self.mainScorllView.fetchContentViewAtIndex = ^UIView *(NSInteger pageIndex){
+        return viewsArray[pageIndex];
+    };
+    self.mainScorllView.totalPagesCount = ^NSInteger(void){
+        return 5;
+    };
+    [self mainScrollViewTap];
+    [self.scrollView addSubview:self.mainScorllView];
+
+}
+-(void)mainScrollViewTap{
+    self.mainScorllView.TapActionBlock = ^(NSInteger pageIndex){
+        NSLog(@"点击了第%ld个",pageIndex);
+        ActivityViewController *avc = [[ActivityViewController alloc] init];
+        [self.navigationController pushViewController:avc animated:YES];
+        
+    };
+}
+
+-(void)initCenterClassifyView{
+    float y = 160;
+    float margin = general_margin;
+    for (int i = 0; i<3; i++) {
+        self.centerClassifyView = [[CenterClassifyView alloc] initWithFrame:CGRectMake(margin+((screen_width-60)/3+margin)*i, y, (screen_width-60)/3, 50)];
+        
+        self.centerClassifyView.classifyContent.text = [self.contentArray objectAtIndex:i];
+        self.centerClassifyView.titleLab.text = [self.titleArray objectAtIndex:i];
+        self.centerClassifyView.tapBtn.tag = 500+i;
+        [self.centerClassifyView.tapBtn addTarget:self action:@selector(tapBtnClick:) forControlEvents:UIControlEventTouchUpInside];
+        
+        if (i == 1) {
+            self.centerClassifyView.classifyContent.textColor = [UIColor redColor];
+        }
+        
+        
+        [self.scrollView addSubview:self.centerClassifyView];
+    }
+}
+
+-(void)initDescriptionLab{
+    float y = 230;
+    float x = general_margin;
+    UILabel *decriptionLab = [[UILabel alloc] initWithFrame:CGRectMake(x, y, 100, 30)];
+    decriptionLab.backgroundColor = [UIColor clearColor];
+    decriptionLab.text = @"12月期宜定赢";
+    decriptionLab.font = [UIFont systemFontOfSize:16];
+    [self.scrollView addSubview:decriptionLab];
+    
+    UIImageView *benxiImgView = [[UIImageView alloc] initWithFrame:CGRectMake(x+100, y, 100, 30)];
+    benxiImgView.image = [UIImage imageNamed:@"ben_xi_security_tu_icon"];
+    [self.scrollView addSubview:benxiImgView];
+
+}
+
+-(void)initCircleView{
+    float y = 270;
+    self.circle = [[Progress alloc] initWithFrame:CGRectMake((screen_width-150)/2, y, 150, 150)];
+    float complete = [[self.dataDic valueForKey:@"complete"] floatValue];
+    [self.circle updataWithValue:complete];
+    [self.scrollView addSubview:self.circle];
+}
+
+-(void)initBtn{
+    float y = 440;
+    UIButton * button = [[UIButton alloc]initWithFrame:CGRectMake((screen_width-100)/2, y, 100, 30)];
+    CALayer *layer = button.layer;
+    [layer setMasksToBounds:YES];
+    [layer setCornerRadius:25/2];
+    [button setBackgroundImage:[UIImage imageNamed:@"nomal_icon"] forState:UIControlStateNormal];
+    [button setBackgroundImage:[UIImage imageNamed:@"selected_icon"] forState:UIControlStateHighlighted];
+    [button addTarget:self action:@selector(goOtherView:) forControlEvents:UIControlEventTouchUpInside];
+    [self.scrollView addSubview:button];
+}
+
+#pragma mark 点击按钮进入其他界面
+
+- (void)goOtherView:(UIButton *)sender{
+    NSString *productId = [self.dataDic valueForKey:@"id"];
+    RecommendViewController * fifth = [[RecommendViewController alloc]initWithToken:nil productId:productId userId:nil investMenoy:nil];
+    [self.navigationController pushViewController:fifth animated:YES];
+}
+
+-(void)tapBtnClick:(UIButton *)sender{
+    NSString *productId = [self.dataDic valueForKey:@"id"];
+    RecommendViewController * fifth = [[RecommendViewController alloc]initWithToken:nil productId:productId userId:nil investMenoy:nil];
+    [self.navigationController pushViewController:fifth animated:YES];
+}
+
+-(void)viewDidDisappear:(BOOL)animated{
+    [super viewDidDisappear:animated];
+    [self.mainScorllView.animationTimer pauseTimer];
+}
+
+- (void)didReceiveMemoryWarning
+{
+    [super didReceiveMemoryWarning];
+    // Dispose of any resources that can be recreated.
+}
+
+@end

@@ -1,0 +1,127 @@
+//
+//  MyDatumViewController.m
+//  JuFuXinGui
+//
+//  Created by mac on 14/12/29.
+//  Copyright (c) 2014年 XB. All rights reserved.
+//
+
+#import "MyDatumViewController.h"
+#import "HAN_Constants.h"
+#import "AboutUsCell.h"
+#import "UserModel.h"
+#import "PopoverView.h"
+static NSString *cellIdentifier = @"ccelll";
+@interface MyDatumViewController ()
+{
+    NSArray * titlearray;
+}
+@end
+
+@implementation MyDatumViewController
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    self.user=[UserModel shareuser];
+    titlearray=@[@"姓名",@"性别"];
+    [self setRightSwipeGesture];
+    [self initHeader];
+    [self initsendBtn];
+    [self initbodyview];
+    // Do any additional setup after loading the view from its nib.
+}
+-(void)initbodyview{
+    UITableView * tableview=[[UITableView alloc]initWithFrame:CGRectMake(0,self.header.frame.size.height+10, screen_width,120)];
+    tableview.delegate=self;
+    tableview.dataSource=self;
+    UINib *nib = [UINib nibWithNibName:@"AboutUsCell" bundle:nil];
+   
+    [tableview registerNib:nib forCellReuseIdentifier:cellIdentifier];
+    tableview.scrollEnabled=NO;
+    [self.view addSubview:tableview];
+    
+}
+#pragma mark UITableViewDataSource @required
+
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
+    return 1;
+}
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
+    AboutUsCell *cell = [tableView dequeueReusableCellWithIdentifier:cellIdentifier];
+    cell.selectionStyle = UITableViewCellSelectionStyleNone;
+    UILabel * label=[[UILabel alloc]initWithFrame:CGRectMake(Screen_weight-160,0,130,40)];
+    label.textColor=[UIColor lightGrayColor];
+    label.textAlignment=NSTextAlignmentRight;
+    label.text=@"";
+    [cell addSubview:label];
+    if (indexPath.section==1) {
+           cell.accessoryType=UITableViewCellAccessoryDisclosureIndicator;
+        label.text=self.user.sex;
+        
+    }else{
+        label.text=self.user.truename;
+    }
+    
+    cell.textLabel.text=[titlearray objectAtIndex:indexPath.section];
+    
+    return cell;
+    
+}
+
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView{
+    return 2;
+}
+-(CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section{
+    return 10;
+}
+-(void)viewWillAppear:(BOOL)animated{
+    [super viewWillAppear:animated];
+    [[NTViewController sharedController] hidesTabBar:YES animated:YES];
+}
+#pragma mark - 头部相关
+//初始化头部
+- (void)initHeader{
+    //初始化布局与背景
+    self.header  = [[HeaderView alloc] initWithTitle:@"完善资料" navigationController:self.navigationController];
+    self.header.backBut.hidden = NO;
+    
+    
+    [self.view addSubview:self.header];
+}
+-(void)initsendBtn{
+    
+    UIButton *shareBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+    shareBtn.frame = commonFrame;
+    shareBtn.backgroundColor = [UIColor clearColor];
+    [shareBtn addTarget:self action:@selector(sendBtnPress:) forControlEvents:UIControlEventTouchUpInside];
+    [shareBtn setTintColor:[UIColor whiteColor]];
+    [shareBtn setTitle:@"编辑" forState:UIControlStateNormal];
+    [self.header addSubview:shareBtn];
+}
+-(void)sendBtnPress:(UIButton *)sender{
+    NSLog(@"编辑");
+    CGPoint point = CGPointMake(sender.frame.origin.x + sender.frame.size.width/2, sender.frame.origin.y + sender.frame.size.height);
+    NSArray *titles = @[@"删除", @"添加", @"修改"];
+   //NSArray *images = @[@"28b.png", @"28b.png", @"28b.png"];
+    PopoverView *pop = [[PopoverView alloc] initWithPoint:point titles:titles images:nil];
+    pop.selectRowAtIndex = ^(NSInteger index){
+        NSLog(@"select index:%ld", (long)index);
+    };
+    [pop show];
+}
+- (void)didReceiveMemoryWarning {
+    [super didReceiveMemoryWarning];
+    // Dispose of any resources that can be recreated.
+}
+
+/*
+#pragma mark - Navigation
+
+// In a storyboard-based application, you will often want to do a little preparation before navigation
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    // Get the new view controller using [segue destinationViewController].
+    // Pass the selected object to the new view controller.
+}
+*/
+
+@end

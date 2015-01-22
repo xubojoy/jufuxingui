@@ -1,0 +1,23 @@
+//
+//  RemittanceViewController.h
+//  JuFuXinGui
+//
+//  Created by mac on 14/12/30.
+//  Copyright (c) 2014年 XB. All rights reserved.
+//
+
+#import <UIKit/UIKit.h>
+#import "YiTouXiangMuModel.h"
+#import "UserModel.h"
+#import "HeaderView.h"
+#import "Macro.h"
+#import "MJRefresh.h"
+#import "NTViewController.h"
+@interface RemittanceViewController : UIViewController<UITableViewDelegate,UITableViewDataSource>
+@property(nonatomic,strong)UITableView * tableview;
+@property(nonatomic,strong)YiTouXiangMuModel * model;
+@property(nonatomic,strong)UILabel * morelabel;
+@property(nonatomic,strong)NSMutableArray * modelarray;
+@property(nonatomic,strong)UserModel * user;
+
+@end

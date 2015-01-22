@@ -1,0 +1,33 @@
+//
+//  JuFuXinGui-Prefix.pch
+//  JuFuXinGui
+//
+//  Created by myStyle on 14-12-17.
+//  Copyright (c) 2014年 XB. All rights reserved.
+//
+
+#import <Availability.h>
+
+#ifndef __IPHONE_3_0
+#warning "This project uses features only available in iOS SDK 3.0 and later."
+#endif
+
+    #ifdef __OBJC__
+    #import <Foundation/Foundation.h>
+    #import <UIKit/UIKit.h>
+    #import <QuartzCore/QuartzCore.h>
+    #import <ShareSDK/ShareSDK.h>
+    #import <SDWebImage/UIImageView+WebCache.h>
+    #import "MBHUDView.h"
+    #import "Macro.h"
+    #import "HeaderView.h"
+    #import "NTViewController.h"
+    #import "UIViewController+Custom.h"
+    #import "CommonItemTxt.h"
+    #import "CommonItemTxtView.h"
+    #import "UICountingLabel.h"
+    #import "JSHttpRequest.h"
+    #import "MJRefresh.h"
+    #import "UserModel.h"
+
+#endif

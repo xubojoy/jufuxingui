@@ -1,0 +1,121 @@
+//
+//  RemittanceViewController.m
+//  JuFuXinGui
+//
+//  Created by mac on 14/12/30.
+//  Copyright (c) 2014年 XB. All rights reserved.
+//
+
+#import "RemittanceViewController.h"
+#define tilel_tag 12120
+#define li_tag    12130
+#define feng_tag  12140
+#define qi_tag    12150
+@interface RemittanceViewController ()
+
+@end
+
+@implementation RemittanceViewController
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    self.view.frame=[UIScreen mainScreen].bounds;
+    [self initview];
+    // Do any additional setup after loading the view from its nib.
+}
+-(void)initview{
+    self.tableview=[[UITableView alloc]initWithFrame:CGRectMake(0, 0, screen_width,100)];
+    self.tableview.delegate=self;
+    self.tableview.dataSource=self;
+    self.tableview.rowHeight=100;
+    [self.view addSubview:self.tableview];
+}
+#pragma mark UITableViewDataSource @required
+
+
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
+    return 2;
+}
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
+    static NSString *cellIdentifier = @"celllll";
+    UITableViewCell * cell=[tableView dequeueReusableCellWithIdentifier:cellIdentifier];
+    if (!cell) {
+        cell=[[UITableViewCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellIdentifier];
+        UILabel * timelabel=[[UILabel alloc]initWithFrame:CGRectMake(10,0,80,40)];
+        timelabel.tag=tilel_tag;
+        [cell addSubview:timelabel];
+        /*
+         @"预期年化收益率";
+         */
+        UILabel * label1=[[UILabel alloc]initWithFrame:CGRectMake(10, timelabel.frame.size.height,screen_width/3, 30)];
+        label1.textColor=[UIColor lightGrayColor];
+        label1.textAlignment=NSTextAlignmentLeft;
+        label1.text=@"预期年化收益率";
+        label1.font=[UIFont systemFontOfSize:13];
+        [cell addSubview:label1];
+        UILabel * label11=[[UILabel alloc]initWithFrame:CGRectMake(10, label1.frame.size.height+label1.frame.origin.y,screen_width/3,30)];
+        label11.textColor=[UIColor redColor];
+        label11.textAlignment=NSTextAlignmentLeft;
+        label11.tag=li_tag;
+        label11.font=[UIFont systemFontOfSize:13];
+        [cell addSubview:label11];
+        /*
+         @"封闭期"
+         */
+        UILabel * label2=[[UILabel alloc]initWithFrame:CGRectMake(10+screen_width/3, timelabel.frame.size.height,screen_width/3, 30)];
+        label2.textColor=[UIColor lightGrayColor];
+        label2.textAlignment=NSTextAlignmentCenter;
+        label2.text=@"封闭期";
+        label2.font=[UIFont systemFontOfSize:13];
+        [cell addSubview:label2];
+        UILabel * label21=[[UILabel alloc]initWithFrame:CGRectMake(10+screen_width/3, label2.frame.size.height+label2.frame.origin.y,screen_width/3,30)];
+        label21.textColor=[UIColor redColor];
+        label21.textAlignment=NSTextAlignmentCenter;
+        label21.tag=feng_tag;
+        label21.font=[UIFont systemFontOfSize:13];
+        [cell addSubview:label21];
+        /*
+         @"起投金额"
+         */
+        UILabel * label3=[[UILabel alloc]initWithFrame:CGRectMake(10+(screen_width/3)*2, timelabel.frame.size.height,screen_width/3, 30)];
+        label3.textColor=[UIColor lightGrayColor];
+        label3.textAlignment=NSTextAlignmentCenter;
+        label3.text=@"起投金额";
+        label3.font=[UIFont systemFontOfSize:13];
+        [cell addSubview:label3];
+        
+        UILabel * label31=[[UILabel alloc]initWithFrame:CGRectMake(10+(screen_width/3)*2, label3.frame.size.height+label3.frame.origin.y,screen_width/3,30)];
+        label31.textColor=[UIColor redColor];
+        label31.textAlignment=NSTextAlignmentCenter;
+        label31.tag=qi_tag;
+        label31.font=[UIFont systemFontOfSize:13];
+        [cell addSubview:label31];
+        
+    }
+    UILabel * label=(UILabel *)[cell viewWithTag:tilel_tag];
+    label.text=@"6月期";
+    UILabel * label1=(UILabel *)[cell viewWithTag:li_tag];
+    UILabel * label2=(UILabel *)[cell viewWithTag:feng_tag];
+    UILabel * label3=(UILabel *)[cell viewWithTag:qi_tag];
+    label1.text=@"8%";
+    label2.text=@"6个月";
+    label3.text=@"1000元";
+    return cell;
+}
+
+- (void)didReceiveMemoryWarning {
+    [super didReceiveMemoryWarning];
+    // Dispose of any resources that can be recreated.
+}
+
+/*
+#pragma mark - Navigation
+
+// In a storyboard-based application, you will often want to do a little preparation before navigation
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    // Get the new view controller using [segue destinationViewController].
+    // Pass the selected object to the new view controller.
+}
+*/
+
+@end

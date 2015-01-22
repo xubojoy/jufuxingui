@@ -1,0 +1,22 @@
+//
+//  CommonItemTxtView.h
+//  styler
+//
+//  Created by wangwanggy820 on 14-4-8.
+//  Copyright (c) 2014年 mlzj. All rights reserved.
+//
+
+#import <UIKit/UIKit.h>
+
+@interface CommonItemTxtView : UIView
+
+@property (nonatomic, strong) NSArray *commonItemTxtArray;
+@property (nonatomic, strong) UIView *upLine;
+@property (nonatomic, strong) UIView *downLine;
+@property (nonatomic, strong) UIImageView *markImgView;
+@property (nonatomic, strong) UILabel *title;
+@property (nonatomic, strong) UILabel *content;
+
+-(id) initWithFrame:(CGRect)frame commonItemTxtArray:(NSArray *)commonItemTxtArray font:(UIFont *)font showMarkImg:(BOOL)showImg;
++(float) judgeHeight:(NSArray *)commonItemTxtArray font:(UIFont *)font;
+@end

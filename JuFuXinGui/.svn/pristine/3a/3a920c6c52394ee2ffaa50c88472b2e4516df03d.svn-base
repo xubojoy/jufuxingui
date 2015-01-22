@@ -1,0 +1,111 @@
+//
+//  PNCircleChart.m
+//  PNChartDemo
+//
+//  Created by kevinzhow on 13-11-30.
+//  Copyright (c) 2013年 kevinzhow. All rights reserved.
+//
+
+#import "PNCircleChart.h"
+
+@interface PNCircleChart ()
+@end
+
+@implementation PNCircleChart
+
+
+- (id)initWithFrame:(CGRect)frame
+              total:(NSNumber *)total
+            current:(NSNumber *)current
+          clockwise:(BOOL)clockwise
+             shadow:(BOOL)hasBackgroundShadow
+{
+    self = [super initWithFrame:frame];
+
+    if (self) {
+        _total = total;
+        self.current = current;
+        _duration = 1.0;
+        _chartType = PNChartFormatTypePercent;
+
+        _countingLabel = [[UICountingLabel alloc] initWithFrame:CGRectMake((screen_width-100)/2, 60, 100.0, 50.0)];
+        [_countingLabel setTextAlignment:NSTextAlignmentCenter];
+        [_countingLabel setFont:[UIFont boldSystemFontOfSize:18.0f]];
+        [_countingLabel setTextColor:[UIColor blackColor]];
+        [_countingLabel setBackgroundColor:[UIColor clearColor]];
+        [self addSubview:_countingLabel];
+        
+        UILabel *markLab = [[UILabel alloc] initWithFrame:CGRectMake((screen_width-100)/2, 80, 100.0, 50.0)];
+        [markLab setTextAlignment:NSTextAlignmentCenter];
+        [markLab setFont:[UIFont boldSystemFontOfSize:12.0f]];
+        [markLab setTextColor:[UIColor blackColor]];
+        markLab.text = @"已完成";
+        [markLab setBackgroundColor:[UIColor clearColor]];
+        [self addSubview:markLab];
+        
+//        kuangLayer = [CALayer layer];
+//        kuangLayer.bounds = CGRectMake(0, 0, 234, 200);
+//        kuangLayer.contents = (id)[UIImage imageNamed:@"wai_kuang_icon"].CGImage;
+//        kuangLayer.position = CGPointMake(screen_width/2, 50);
+//        [self.layer addSublayer:kuangLayer];
+//
+//        
+//        pinLayer = [CALayer layer];
+//        pinLayer.bounds = CGRectMake(0, 0, 25, 22);
+//        pinLayer.contents = (id)[UIImage imageNamed:@"zhi_zhen_icon"].CGImage;
+//        pinLayer.position = CGPointMake(screen_width/2+3, 60);
+//        pinLayer.anchorPoint = CGPointMake(1.0, 1.0);
+//        pinLayer.transform = CATransform3DRotate(pinLayer.transform, DEGREES_TO_RADIANS(-70), 0, 0, 1);
+//        
+//        [self.layer addSublayer:pinLayer];
+        
+        self.imgView = [[UIImageView alloc] initWithFrame:CGRectMake((screen_width-117)/2, 0, 117, 100)];
+        self.imgView.image = [UIImage imageNamed:@"wai_kuang_icon"];
+        [self addSubview:self.imgView];
+        
+        self.pinImgView = [[UIImageView alloc] initWithFrame:CGRectMake((screen_width-58)/2, 0, 58, 50)];
+        self.pinImgView.image = [UIImage imageNamed:@"zhi_zhen_icon"];
+        self.pinImgView.layer.position = CGPointMake(screen_width/2, 60);
+        self.pinImgView.layer.transform = CATransform3DRotate(self.pinImgView.layer.transform, DEGREES_TO_RADIANS(-70), 0, 0, 1);
+        self.pinImgView.layer.anchorPoint = CGPointMake(1.0, 1.0);
+        [self addSubview:self.pinImgView];
+        
+    }
+
+    return self;
+}
+
+
+- (void)strokeChart
+{
+    NSString *format;
+    switch (self.chartType) {
+        case PNChartFormatTypePercent:
+            format = @"%d%%";
+            break;
+        case PNChartFormatTypeDollar:
+            format = @"$%d";
+            break;
+        case PNChartFormatTypeNone:
+        default:
+            format = @"%d";
+            break;
+    }
+    self.countingLabel.format = format;
+}
+
+-(void)updateChartByCurrent:(NSNumber *)current{
+      [self.countingLabel countFrom:fmin([_current floatValue], [_total floatValue]) to:fmin([current floatValue], [_total floatValue]) withDuration:self.duration];
+    NSLog(@">>>>self.countingLabel>>>>>>>>>:%@",current);
+    CABasicAnimation* rotationAnimation = [CABasicAnimation animationWithKeyPath:@"transform.rotation.z"];
+    rotationAnimation.toValue = [NSNumber numberWithFloat:(DEGREES_TO_RADIANS((260/100)*[current floatValue]))];
+    rotationAnimation.duration = 1.0f;
+    rotationAnimation.autoreverses = YES; // Very convenient CA feature for an animation like this
+    rotationAnimation.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut];
+   
+    [self.pinImgView.layer addAnimation:rotationAnimation forKey:@"Animation"];
+    
+}
+
+
+@end

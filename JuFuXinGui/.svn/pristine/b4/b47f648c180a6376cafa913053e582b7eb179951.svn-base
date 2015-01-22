@@ -1,0 +1,82 @@
+//
+//  YongHuViewController.m
+//  JuFuXinGui
+//
+//  Created by mac on 15/1/5.
+//  Copyright (c) 2015年 XB. All rights reserved.
+//
+
+#import "YongHuViewController.h"
+
+@interface YongHuViewController ()
+
+@end
+
+@implementation YongHuViewController
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    // Do any additional setup after loading the view from its nib.
+}
+-(void)viewDidAppear:(BOOL)animated{
+    [super viewDidAppear:animated];
+    [self getadata];
+    
+}
+-(void)getadata{
+    __weak YongHuViewController * weeksafa=self;
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        
+        NSString * string=@"http://www.gmtxw06.com/index.php?m=Article&a=user_list";
+        NSURL * url=[NSURL URLWithString:string];
+        NSURLRequest * request=[NSURLRequest requestWithURL:url];
+        //        HAN_HttpRequest * request=[HAN_HttpRequest defaultRequest];
+        //        [request getlistWith:page andSuccessBlock:^(id data) {
+        //            NSDictionary * dic=(NSDictionary *)data;
+        //
+        //            dispatch_async(dispatch_get_main_queue(), ^{
+        //                NSLog(@"这个是%@内容%@",dic,[dic objectForKey:@"content"]);
+        //
+        //            });
+        //        } WithFailBlock:^(NSError *error) {
+        //
+        //        }];
+        NSURLResponse *response = nil;
+        NSError *error = nil;
+        NSData *data = [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:&error];
+        NSLog(@"时尚大方%@",data);
+        NSString * datastring=[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+        NSLog(@"发生大发啊是%@",datastring);
+        dispatch_async(dispatch_get_main_queue(), ^{
+            NSError *error;
+            NSDictionary *userInfo = [NSJSONSerialization JSONObjectWithData:[datastring dataUsingEncoding:NSUTF8StringEncoding] options:NSJSONReadingMutableLeaves error:&error];
+            // id object=[NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingAllowFragments error:&error];
+            NSDictionary * dic=(NSDictionary *)userInfo;
+            if ([[dic objectForKey:@"code"] isEqualToString:@"01"]) {
+                NSLog(@"sjdfakljdksf");
+                weeksafa.titleString=[dic objectForKey:@"title"];
+                weeksafa.context=[dic objectForKey:@"content"];
+                [weeksafa initbody];
+            }
+        });
+    });
+}
+-(void)initbody{
+    [super initbody];
+}
+- (void)didReceiveMemoryWarning {
+    [super didReceiveMemoryWarning];
+    // Dispose of any resources that can be recreated.
+}
+
+/*
+#pragma mark - Navigation
+
+// In a storyboard-based application, you will often want to do a little preparation before navigation
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    // Get the new view controller using [segue destinationViewController].
+    // Pass the selected object to the new view controller.
+}
+*/
+
+@end

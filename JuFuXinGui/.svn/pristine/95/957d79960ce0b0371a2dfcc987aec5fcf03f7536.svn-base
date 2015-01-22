@@ -1,0 +1,14 @@
+//
+//  MyDatumViewController.h
+//  JuFuXinGui
+//
+//  Created by mac on 14/12/29.
+//  Copyright (c) 2014年 XB. All rights reserved.
+//
+
+#import <UIKit/UIKit.h>
+#import "UserModel.h"
+@interface MyDatumViewController : UIViewController<UITableViewDataSource,UITableViewDelegate>
+@property (nonatomic, strong) HeaderView *header;
+@property (nonatomic,strong)UserModel * user;
+@end

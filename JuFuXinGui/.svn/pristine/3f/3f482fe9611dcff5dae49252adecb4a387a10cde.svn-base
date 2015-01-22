@@ -1,0 +1,18 @@
+//
+//  RecommendDetailViewController.h
+//  JuFuXinGui
+//
+//  Created by xubojoy on 14/12/26.
+//  Copyright (c) 2014年 XB. All rights reserved.
+//
+
+#import <UIKit/UIKit.h>
+#import "TopViewCell.h"
+#import "ExceptYearRateCell.h"
+#import "CommonItemTxt.h"
+#import "CommonItemTxtView.h"
+@interface RecommendDetailViewController : UIViewController<UITableViewDataSource, UITableViewDelegate>
+@property (nonatomic, strong) HeaderView *header;
+@property (nonatomic, strong) UITableView *tableView;
+@property (strong, nonatomic) CommonItemTxtView *descriptionView;
+@end

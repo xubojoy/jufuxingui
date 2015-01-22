@@ -1,0 +1,395 @@
+//
+//  RegisterViewController.m
+//  JuFuXinGui
+//
+//  Created by mac on 14/12/26.
+//  Copyright (c) 2014年 XB. All rights reserved.
+//
+
+#import "RegisterViewController.h"
+#import "HAN_Constants.h"
+#import "HAN_HttpRequest.h"
+#import "MyTextField.h"
+#import "JSHttpRequest.h"
+#import <CommonCrypto/CommonCrypto.h>
+#define time_int 60
+@class LoginViewController;
+@interface RegisterViewController ()
+{
+    int tim;
+}
+@end
+
+@implementation RegisterViewController
+-(void)viewWillAppear:(BOOL)animated{
+    [super viewWillAppear:animated];
+    self.navigationController.navigationBarHidden = YES;
+    
+}
+#pragma mark - 头部相关
+//初始化头部
+- (void)initHeader{
+    //初始化布局与背景
+    self.header  = [[HeaderView alloc] initWithTitle:@"注册" navigationController:self.navigationController];
+    self.header.backBut.hidden = YES;
+    [self.view addSubview:self.header];
+}
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    tim=time_int;
+    self.view.backgroundColor =RGBACOLOR(236, 236, 236,1);
+    [self initHeader];
+    [self initbackBtn];
+    [self initbodyview];
+    // Do any additional setup after loading the view from its nib.
+}
+-(void)initbackBtn{
+    
+    UIButton *shareBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+    shareBtn.frame = CGRectMake(0, 20, 44, 43.5);
+    shareBtn.backgroundColor = [UIColor clearColor];
+    [shareBtn addTarget:self action:@selector(backBtnPress:) forControlEvents:UIControlEventTouchUpInside];
+    [shareBtn setTitle:@"返回" forState:UIControlStateNormal];
+    [self.header addSubview:shareBtn];
+}
+-(void)backBtnPress:(UIButton *)sender{
+    
+    
+    [self dismissViewControllerAnimated:YES completion:nil];
+}
+#pragma mark view
+-(UIView *)addviewnext:(int) next{
+    UIView * firstview=[[UIView alloc]initWithFrame:CGRectMake(0,self.header.frame.size.height, screen_width, 50)];
+    firstview.backgroundColor=[UIColor clearColor];
+    UILabel * linelabel=[[UILabel alloc]initWithFrame:CGRectMake(0,firstview.frame.size.height, Screen_weight,0.5)];
+    linelabel.backgroundColor=linecolor;
+    [firstview addSubview:linelabel];
+    [self.view addSubview:firstview];
+    
+    UILabel * lable=[[UILabel alloc]initWithFrame:CGRectMake(40,5, (Screen_weight-80)/4,40)];
+    if (Screen_weight==414) {
+        lable.frame=CGRectMake(50,5, (Screen_weight-80)/4,40);
+    }
+    lable.font=[UIFont systemFontOfSize:15];
+    NSLog(@"%f",Screen_weight-80/40);
+    lable.text=@"身份验证";
+    lable.textColor=blue_color;
+    lable.textAlignment=NSTextAlignmentLeft;
+    [firstview addSubview:lable];
+    
+    UILabel * lable1=[[UILabel alloc]initWithFrame:CGRectMake((Screen_weight-80)/4+40,25,(Screen_weight-80)/4,1)];
+    if (Screen_weight==375) {
+        lable1.frame=CGRectMake((Screen_weight-80)/4+30, 25, (Screen_weight-80)/4+10, 1);
+    }else  if(Screen_weight==414){
+        lable1.frame=CGRectMake((Screen_weight-80)/4+30, 25, (Screen_weight-80)/4+20, 1);
+    }
+    lable1.backgroundColor=blue_color;
+    [firstview addSubview:lable1];
+    
+    UILabel * lable2=[[UILabel alloc]initWithFrame:CGRectMake(Screen_weight-(Screen_weight-80)/4-40,5,(Screen_weight-80)/4,40)];
+    lable2.font=[UIFont systemFontOfSize:15];
+    NSLog(@"%f",Screen_weight-80/40);
+    lable2.text=@"完成开户";
+    lable2.textColor=blue_color;
+    lable2.textAlignment=NSTextAlignmentLeft;
+    [firstview addSubview:lable2];
+    UILabel * lable21=[[UILabel alloc]initWithFrame:CGRectMake((Screen_weight-80)/2+40,25,(Screen_weight-80)/4,1)];
+    
+    
+    [firstview addSubview:lable21];
+
+    if (next==1) {
+        lable21.backgroundColor=linecolor;
+    }else{
+        lable21.backgroundColor=blue_color;
+    }
+    return  firstview;
+}
+#pragma mark 初始化视图
+-(void)initbodyview{
+    
+    UIView * firstview=[self addviewnext:1];
+    UILabel * firstlabel=[[UILabel alloc]initWithFrame:CGRectMake(10, firstview.frame.size.height+firstview.frame.origin.y+5, Screen_weight-20, 30)];
+    firstlabel.text=@"为了保障账户资金安全，请使用真实身份注册";
+    firstlabel.font=[UIFont systemFontOfSize:13];
+    firstlabel.textColor=RGBACOLOR(138, 138, 138, 1);
+    [self.view addSubview:firstlabel];
+    MyTextField * namefield=[[MyTextField alloc]initWithFrame:CGRectMake(10,firstview.frame.size.height+firstview.frame.origin.y+40, Screen_weight-20,40)];
+    self.nametext=namefield;
+    namefield.myTextField.delegate=self;
+    [namefield initViewWithString:@""];
+    //namefield.typeLabel.text=@"真实姓名";
+    namefield.myTextField.placeholder=@"真实姓名";
+    [self.view addSubview:namefield];
+    MyTextField * phonefield=[[MyTextField alloc]initWithFrame:CGRectMake(10, namefield.frame.size.height+namefield.frame.origin.y+5, Screen_weight-20,40)];
+    [phonefield initViewWithString:@""];
+    //namefield.typeLabel.text=@"手机号";
+    phonefield.myTextField.delegate=self;
+    //self.phonetext=phonefield;
+    phonefield.myTextField.placeholder=@"手机号";
+    phonefield.myTextField.keyboardType=UIKeyboardTypeNumberPad;
+    self.phonetext=phonefield;
+    [self.view addSubview:phonefield];
+    
+    UILabel * flabel=[[UILabel alloc]initWithFrame:CGRectMake(10, phonefield.frame.size.height+phonefield.frame.origin.y+5, Screen_weight-20, 30)];
+    flabel.text=@"该手机号将作为你的登陆账号";
+    flabel.font=[UIFont systemFontOfSize:13];
+    flabel.textColor=RGBACOLOR(138, 138, 138, 1);
+    [self.view addSubview:flabel];
+    
+    UIButton * nextbtn=[UIButton buttonWithType:UIButtonTypeCustom];
+    nextbtn.frame=CGRectMake(20, phonefield.frame.origin.y+phonefield.frame.size.height+50,Screen_weight-40, 40);
+    nextbtn.backgroundColor=linecolor;
+    self.nextbutton=nextbtn;
+    nextbtn.userInteractionEnabled=NO;
+    [nextbtn setTitle:@"下一步" forState:UIControlStateNormal];
+    [nextbtn setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    [nextbtn addTarget:self action:@selector(nextclick:) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:nextbtn];
+    
+    
+}
+#pragma mark UITextFieldDelegate
+- (void)textFieldDidEndEditing:(UITextField *)textField{
+    if ([self.nametext.myTextField.text isEqualToString:@""]||[self.phonetext.myTextField.text isEqualToString:@""]) {
+        self.nextbutton.backgroundColor=linecolor;
+        self.nextbutton.userInteractionEnabled=NO;
+    }else{
+        self.nextbutton.backgroundColor=nextbtncolor;
+        self.nextbutton.userInteractionEnabled=YES;
+    }
+}
+- (void)nextclick:(UIButton *)sender{
+    NSLog(@"点击");
+    if ([self.nametext.myTextField.text isEqualToString:@""]||[self.phonetext.myTextField.text isEqualToString:@""]||self.phonetext.myTextField.text.length<=10) {
+        [self getalert:@"信息完整度不够或手机号码格式不正确"];
+    }else{
+        [self mysecondview];
+        NSLog(@"%@>>>>>%@",self.nametext.myTextField.text,self.phonetext.myTextField.text);
+        [UIView beginAnimations:nil context:nil];
+        [UIView setAnimationCurve:UIViewAnimationCurveEaseInOut];
+        [UIView setAnimationDuration:1.0];
+        [UIView setAnimationTransition:UIViewAnimationTransitionFlipFromLeft forView:self.view cache:YES];
+        
+        self.secondview.hidden=NO;
+        [UIView commitAnimations];
+    }
+    
+}
+
+- (void)mysecondview{
+    UIView * view=[self addviewnext:2];
+    UIView *myview=[[UIView alloc]initWithFrame:CGRectMake(0,view.frame.size.height+10, Screen_weight, Screen_height)];
+    self.secondview=myview;
+    view.frame=CGRectMake(0, 0, Screen_weight,50);
+    [self.secondview addSubview:view];
+    myview.backgroundColor=[UIColor whiteColor];
+    MyTextField * namefield=[[MyTextField alloc]initWithFrame:CGRectMake(10,view.frame.size.height+10, Screen_weight-20,40)];
+    self.secondname=namefield;
+    namefield.type=3;
+    namefield.myTextField.delegate=self;
+    [namefield initViewWithString:@""];
+    namefield.typeLabel.text=@"账号";
+    namefield.myTextField.keyboardType=UIKeyboardTypeNumberPad;
+    namefield.myTextField.placeholder=@"请输入手机号";
+    [myview addSubview:namefield];
+    MyTextField * phonefield=[[MyTextField alloc]initWithFrame:CGRectMake(10, namefield.frame.size.height+namefield.frame.origin.y+5, Screen_weight-20,40)];
+    phonefield.type=3;
+    [phonefield initViewWithString:@""];
+    phonefield.typeLabel.text=@"密码";
+    phonefield.myTextField.delegate=self;
+    //self.phonetext=phonefield;
+    phonefield.myTextField.placeholder=@"密码不得少于六位数";
+    self.pwdtext=phonefield;
+    [myview addSubview:phonefield];
+    [self.view addSubview:myview];
+    MyTextField * codefield=[[MyTextField alloc]initWithFrame:CGRectMake(10, phonefield.frame.size.height+phonefield.frame.origin.y+5, Screen_weight-20,40)];
+    codefield.type=1;
+    [codefield initViewWithString:@""];
+    codefield.typeLabel.text=@"";
+    codefield.myTextField.delegate=self;
+    codefield.myTextField.placeholder=@"请输入验证码";
+    codefield.myTextField.keyboardType=UIKeyboardTypeNumberPad;
+    UIButton * yan=[UIButton buttonWithType:UIButtonTypeCustom];
+    yan.frame=CGRectMake(codefield.frame.size.width-75,0,75,40);
+    self.yanbtn=yan;
+    [yan setTitle:@"获取验证码" forState:UIControlStateNormal];
+    //[yan setBackgroundImage:[UIImage imageNamed:@"获取验证码"] forState:UIControlStateNormal];
+    yan.titleLabel.font=[UIFont systemFontOfSize:13];
+    [yan setBackgroundColor:blue_color];
+    [yan addTarget:self action:@selector(yanclick:) forControlEvents:UIControlEventTouchUpInside];
+    [codefield addSubview:yan];
+    self.codetext=codefield;
+    [myview addSubview:codefield];
+    [self.view addSubview:myview];
+    myview.hidden=YES;
+    
+    UIButton * tbtn=[UIButton buttonWithType:UIButtonTypeCustom];
+    tbtn.frame=CGRectMake(20,codefield.frame.origin.y+codefield.frame.size.height+15,10,10);
+    //[tbtn setTitle:@"1" forState:UIControlStateNormal];
+    //[tbtn setTitle:@"2" forState:UIControlStateSelected];
+    tbtn.titleLabel.font=[UIFont systemFontOfSize:13];
+    //[tbtn setBackgroundColor:blue_color];
+    [tbtn setBackgroundImage:[UIImage imageNamed:@"没点"] forState:UIControlStateNormal];
+    [tbtn setBackgroundImage:[UIImage imageNamed:@"选中"] forState:UIControlStateSelected];
+    [tbtn addTarget:self action:@selector(truebtn:) forControlEvents:UIControlEventTouchUpInside];
+    [myview addSubview:tbtn];
+    UILabel * labeltile=[[UILabel alloc]initWithFrame:CGRectMake(tbtn.frame.size.width+20,tbtn.frame.origin.y-15,200,40)];
+    labeltile.text=@"我已同意注册协议";
+    labeltile.textColor=[UIColor lightGrayColor];
+    labeltile.textAlignment=NSTextAlignmentLeft;
+    [myview addSubview:labeltile];
+    
+    UIButton * qurenbtn=[UIButton buttonWithType:UIButtonTypeCustom];
+    qurenbtn.frame=CGRectMake(40,codefield.frame.origin.y+codefield.frame.size.height+50,Screen_weight-80,40);
+    [qurenbtn setTitle:@"确认" forState:UIControlStateNormal];
+    [qurenbtn setBackgroundColor:[UIColor lightGrayColor]];
+    [qurenbtn addTarget:self action:@selector(turebtnclick:) forControlEvents:UIControlEventTouchUpInside];
+    qurenbtn.titleLabel.font=[UIFont systemFontOfSize:13];
+    self.turebtn=qurenbtn;
+   [myview addSubview:qurenbtn];
+}
+#pragma mark 获取验证码
+-(void)yanclick:(UIButton *)sender{
+    if ([self.secondname.myTextField.text isEqualToString:@""])
+    {
+        
+        [self getalert:@"数据不完整"];
+    }else if(![self.secondname.myTextField.text isEqualToString:self.phonetext.myTextField.text])
+    {
+        [self getalert:@"账号前后输入不一致"];
+    }
+    else{
+        UIAlertView * alert=[[UIAlertView alloc]initWithTitle:@"温馨提示" message:[NSString stringWithFormat:@"您确定要向%@发送验证码？",self.secondname.myTextField.text] delegate:self cancelButtonTitle:@"取消" otherButtonTitles:@"确定", nil];
+        alert.tag=10010;
+        [alert show];
+    }
+}
+
+-(void)getyanzma{
+    __weak RegisterViewController * weeksafa=self;
+    HAN_HttpRequest * req=[HAN_HttpRequest defaultRequest];
+    [req getPhoneCode:self.secondname.myTextField.text WithSuccessBlock:^(id data) {
+     //   dispatch_async(dispatch_get_main_queue(), ^{
+            NSDictionary * dic=(NSDictionary *)data;
+            if ([[dic objectForKey:@"code"] isEqualToString:@"01"]) {
+                NSLog(@"sdfasfasf成功");
+                if (weeksafa.timer==nil) {
+                    weeksafa.timer=[NSTimer scheduledTimerWithTimeInterval:1 target:weeksafa selector:@selector(ontime) userInfo:nil repeats:YES];
+                    tim=time_int;
+                }
+                weeksafa.yanbtn.userInteractionEnabled=NO;
+                [weeksafa getalert:@"发送验证码成功"];
+                
+            }else{
+                NSLog(@"ss获取验证吗失败");
+            }
+            
+            
+      //  });
+        
+    } WithFailBlock:^(NSError *error) {
+        
+    }];
+    
+}
+-(void)ontime{
+    tim--;
+    [self.yanbtn setTitle:[NSString stringWithFormat:@"%ds",tim] forState:UIControlStateNormal];
+    if (self.timer!=nil) {
+        if (tim<=0) {
+            [self.timer invalidate];
+            self.timer=nil;
+            [self.yanbtn setTitle:@"获取验证码" forState:UIControlStateNormal];
+            tim=time_int;
+            self.yanbtn.userInteractionEnabled=YES;
+        }
+        
+    }
+}
+#pragma mark UIAlertViewDelegate
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex{
+    if (alertView.tag==10010) {
+        if (buttonIndex==1) {
+            [self getyanzma];
+        }
+    }else if(alertView.tag==130130){
+        [self dismissViewControllerAnimated:YES completion:nil];
+    }
+}
+
+#pragma mark 同意协议
+-(void)truebtn:(UIButton *)sender{
+    sender.selected=!sender.selected;
+    self.turebtn.backgroundColor=sender.selected?[UIColor redColor]:[UIColor lightGrayColor];
+    self.turebtn.userInteractionEnabled=sender.selected?YES:NO;
+}
+#pragma mark
+-(void)turebtnclick:(UIButton *)sender{
+    if ([self.codetext.myTextField.text isEqualToString:@""]||[self.secondname.myTextField.text isEqualToString:@""]||[self.pwdtext.myTextField.text isEqualToString:@""]||self.secondname.myTextField.text.length<=10)
+    {
+        [self getalert:@"请填写正确的信息"];
+    }else{
+        
+        __weak RegisterViewController * weeksafa=self;
+        NSString * rpwd=[self md5:self.pwdtext.myTextField.text];
+        NSDictionary * postDict = [NSDictionary dictionaryWithObjectsAndKeys:self.secondname.myTextField.text,@"username",rpwd,@"pwd",@"2",@"st",@"bb2c74d9f5d9f44b81681a5c21772b9a",@"gmtx",self.codetext.myTextField.text,@"verify",nil];
+        HAN_HttpRequest * req=[HAN_HttpRequest defaultRequest];
+         [req getRegistWithNSDictionary:postDict andSuccessBlock:^(id data) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                NSDictionary * dic=(NSDictionary *)data;
+                if ([[dic objectForKey:@"code"] isEqualToString:@"01"]) {
+                    tim=0;
+                    [weeksafa ontime];
+            UIAlertView * alert=[[UIAlertView alloc] initWithTitle:@"温馨提示" message:@"您的操作已成功" delegate:weeksafa cancelButtonTitle:nil otherButtonTitles:@"确定",nil];
+                    alert.tag=130130;
+                    [alert show];
+                }else{
+                    NSLog(@"%@",dic);
+                    [weeksafa getalert:[dic objectForKey:@"error"]];
+                }
+            });
+          
+            
+        }WithFailBlock:^(NSError *error){
+            
+        }
+         ];
+        
+      
+    }
+}
+#pragma mark 提示框
+-(void)getalert:(NSString *)string{
+    UIAlertView * alert=[[UIAlertView alloc]initWithTitle:@"温馨提示" message:string delegate:nil cancelButtonTitle:nil otherButtonTitles:@"知道了", nil];
+    [alert show];
+}
+- (void)didReceiveMemoryWarning {
+    [super didReceiveMemoryWarning];
+    // Dispose of any resources that can be recreated.
+}
+#pragma mark 加密字符串
+- (NSString *)md5:(NSString *)str
+{
+    const char *cStr = [str UTF8String];
+    unsigned char result[16];
+    CC_MD5(cStr,strlen(cStr), result); // This is the md5 call
+    return [NSString stringWithFormat:
+            @"%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x",
+            result[0], result[1], result[2], result[3],
+            result[4], result[5], result[6], result[7],
+            result[8], result[9], result[10], result[11],
+            result[12], result[13], result[14], result[15]
+            ]; 
+}
+/*
+#pragma mark - Navigation
+
+// In a storyboard-based application, you will often want to do a little preparation before navigation
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    // Get the new view controller using [segue destinationViewController].
+    // Pass the selected object to the new view controller.
+}
+*/
+
+@end

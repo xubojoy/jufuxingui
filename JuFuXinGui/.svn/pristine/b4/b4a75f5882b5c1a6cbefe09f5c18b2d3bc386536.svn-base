@@ -1,0 +1,208 @@
+//
+//  NextViewController.m
+//  JuFuXinGui
+//
+//  Created by myStyle on 14-12-17.
+//  Copyright (c) 2014年 XB. All rights reserved.
+//
+
+#import "InvestmentViewController.h"
+#import "InvestmentCell.h"
+#import "RecommendViewController.h"
+
+static NSString *identifier = @"cell";
+@interface InvestmentViewController ()
+
+@end
+
+@implementation InvestmentViewController
+
+-(void)viewWillAppear:(BOOL)animated{
+    [super viewWillAppear:animated];
+    self.navigationController.navigationBarHidden = YES;
+    [[NTViewController sharedController] hidesTabBar:NO animated:NO];
+    [self initHeader];
+    [self initTableView];
+    [self loadInvestData];
+    // 2.集成刷新控件
+    [self setupRefresh];
+//    [self.tableView reloadData];
+    NSLog(@"_____viewWillAppear_______");
+    
+}
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    self.view.backgroundColor = [UIColor whiteColor];
+    
+}
+
+/**
+ *  数据的懒加载
+ */
+- (NSMutableArray *)dataArray
+{
+    if (!_dataArray) {
+        self.dataArray = [NSMutableArray array];
+        
+//        for (int i = 0; i<12; i++) {
+//            [self.dataArray addObject:MJRandomData];
+//        }
+    }
+    return _dataArray;
+}
+
+
+-(void)loadInvestData{
+     [MBHUDView hudWithBody:@"正在加载..." type:MBAlertViewHUDTypeActivityIndicator hidesAfter:30 show:YES];
+    NSString *url = URL_all_tou_zi;
+    JSHttpRequest *request = [[JSHttpRequest alloc] init];
+    [request StartWorkWithUrlstr:url];
+    request.successGetData = ^(id obj){
+        [MBHUDView dismissCurrentHUD];
+        NSLog(@"____________:%@",obj);
+        NSString *code = [obj valueForKey:@"code"];
+        if ([code isEqualToString:@"01"]) {
+            self.dataArray = [obj valueForKey:@"result"];
+            [self.tableView reloadData];
+            
+        }
+    };
+    request.failureGetData = ^(id obj){
+        NSLog(@">>>>>>>>>>>>>加载失败");
+    };
+}
+
+#pragma mark - 头部相关
+//初始化头部
+- (void)initHeader{
+    //初始化布局与背景
+    self.header  = [[HeaderView alloc] initWithTitle:@"投资项目" navigationController:self.navigationController];
+    self.header.backBut.hidden = YES;
+    [self.view addSubview:self.header];
+    [self initSearchBtn];
+}
+
+-(void)initSearchBtn{
+    
+    UIButton *searchBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+    searchBtn.frame = commonFrame;
+    [searchBtn setImage:[UIImage imageNamed:@"search_icon"] forState:UIControlStateNormal];
+    [searchBtn.titleLabel setFont:[UIFont boldSystemFontOfSize:14]];
+    [searchBtn addTarget:self action:@selector(searchBtnPress:) forControlEvents:UIControlEventTouchUpInside];
+    [self.header addSubview:searchBtn];
+}
+
+-(void)searchBtnPress:(id)sender{
+
+}
+
+//初始化tableView
+-(void)initTableView{
+    self.tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, self.header.frame.size.height, VIEW_WEIGHT, VIEW_HEIGHT-49-self.header.frame.size.height) style:UITableViewStylePlain];
+    self.tableView.delegate = self;
+    self.tableView.dataSource = self;
+//    UINib *nib = [UINib nibWithNibName:@"InvestmentCell" bundle:nil];
+//    [self.tableView registerNib:nib forCellReuseIdentifier:identifier];
+    self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
+    [self.view addSubview:self.tableView];
+}
+
+
+-(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
+
+    NSLog(@">>>>>>self.dataArray.count>>>>>>>%ld",self.dataArray.count);
+    return self.dataArray.count;
+}
+
+-(UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
+    
+    InvestmentCell *cell = [[InvestmentCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier];
+    
+    [cell renderInvestMentWithDict:[self.dataArray objectAtIndex:indexPath.row]];
+    cell.selectionStyle = UITableViewCellSelectionStyleNone;
+    return cell;
+}
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    return 80;
+}
+
+-(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
+    [self.tableView deselectRowAtIndexPath:indexPath animated:YES];
+    NSString *productId = [[self.dataArray objectAtIndex:indexPath.row] valueForKey:@"id"];
+    NSString *allmoney = [[self.dataArray objectAtIndex:indexPath.row] valueForKey:@"allmoney"];
+    RecommendViewController * rvc = [[RecommendViewController alloc]initWithToken:self.user.token productId:productId  userId:nil investMenoy:allmoney];
+    [self.navigationController pushViewController:rvc animated:YES];
+}
+
+/**
+ *  集成刷新控件
+ */
+- (void)setupRefresh
+{
+    // 1.下拉刷新(进入刷新状态就会调用self的headerRereshing)
+    [self.tableView addHeaderWithTarget:self action:@selector(headerRereshing)];
+//#warning 自动刷新(一进入程序就下拉刷新)
+//    [self.tableView headerBeginRefreshing];
+    
+    // 2.上拉加载更多(进入刷新状态就会调用self的footerRereshing)
+    [self.tableView addFooterWithTarget:self action:@selector(footerRereshing)];
+    
+    // 设置文字(也可以不设置,默认的文字在MJRefreshConst中修改)
+    self.tableView.headerPullToRefreshText = @"下拉可以刷新了";
+    self.tableView.headerReleaseToRefreshText = @"松开马上刷新了";
+    self.tableView.headerRefreshingText = @"MJ哥正在帮你刷新中,不客气";
+    
+    self.tableView.footerPullToRefreshText = @"上拉可以加载更多数据了";
+    self.tableView.footerReleaseToRefreshText = @"松开马上加载更多数据了";
+    self.tableView.footerRefreshingText = @"MJ哥正在帮你加载中,不客气";
+}
+
+#pragma mark 开始进入刷新状态
+- (void)headerRereshing
+{
+    
+    // 2.2秒后刷新表格UI
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+//        // 刷新表格
+//        [self.tableView reloadData];
+        [self loadInvestData];
+        // (最好在刷新表格后调用)调用endRefreshing可以结束刷新状态
+        [self.tableView headerEndRefreshing];
+    });
+}
+
+- (void)footerRereshing
+{
+   
+    // 2.2秒后刷新表格UI
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+//        // 刷新表格
+//        [self.tableView reloadData];
+         [self loadInvestData];
+        
+        // (最好在刷新表格后调用)调用endRefreshing可以结束刷新状态
+        [self.tableView footerEndRefreshing];
+    });
+}
+
+
+
+
+- (void)didReceiveMemoryWarning {
+    [super didReceiveMemoryWarning];
+    // Dispose of any resources that can be recreated.
+}
+
+/*
+#pragma mark - Navigation
+
+// In a storyboard-based application, you will often want to do a little preparation before navigation
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    // Get the new view controller using [segue destinationViewController].
+    // Pass the selected object to the new view controller.
+}
+*/
+
+@end
