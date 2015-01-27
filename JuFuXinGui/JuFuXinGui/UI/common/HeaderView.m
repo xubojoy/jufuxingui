@@ -25,7 +25,7 @@
     self = [super init];
     if (self) {
         self = [[[NSBundle mainBundle]loadNibNamed:@"HeaderView" owner:self options:nil] objectAtIndex:0];
-        self.backgroundColor = RGBACOLOR(41, 127, 255, 1);
+        self.backgroundColor = RGBACOLOR(13, 107, 255, 1);
         self.nc = navigationController;
         [self.title setFont:[UIFont boldSystemFontOfSize:20]];
         [self.title setTextColor:[UIColor whiteColor]];

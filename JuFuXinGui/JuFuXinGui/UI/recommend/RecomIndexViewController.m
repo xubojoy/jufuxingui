@@ -43,14 +43,12 @@
     [self initDescriptionLab];
     [self loadIndexData];
     [self loadIndexActivityData];
-    
 }
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
     self.titleArray = [[NSMutableArray alloc] initWithObjects:@"封闭期",@"年化收益",@"起投金额", nil];
-    
 }
 
 //加载数据
@@ -72,26 +70,19 @@
            NSString *minmoney = [self.dataDic valueForKey:@"minmoney"];
             self.contentArray = [[NSMutableArray alloc] initWithObjects:timelong,interestrates,minmoney, nil];
             [self initCenterClassifyView];
-            NSLog(@">>>>>>contentArray>>>>>>>%@",self.contentArray);
         }
     };
     request.failureGetData = ^(id obj){
         NSLog(@">>>>>>>>>>>>>加载失败");
-        
     };
 }
 
-
 -(void)loadIndexActivityData{
-
-    NSLog(@">>>>>>>>活动图走到着了>>>>>>>>");
-    
-     NSString *url = URL_Index_huodong;
+    NSString *url = URL_Index_huodong;
     NSDictionary *postDic = [NSDictionary dictionaryWithObjectsAndKeys:@"2",@"st", nil];
     JSHttpRequest *request = [[JSHttpRequest alloc] init];
     [request StartWorkPostWithurlstr:url pragma:postDic ImageData:nil];
     request.successGetData = ^(id obj){
-        NSLog(@">>>>>>>>活动图>>>>>>>>%@",obj);
         NSString *code = [obj valueForKey:@"code"];
         if ([code isEqualToString:@"01"]) {
             self.huodongArray = [obj valueForKey:@"result"];
@@ -126,7 +117,7 @@
         NSString *imgUrl = [dic valueForKey:@"pic"];
         UIImageView *huodongImgView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, screen_width, 150)];
         huodongImgView.userInteractionEnabled = YES;
-        [huodongImgView setImageWithURL:[NSURL URLWithString:imgUrl] placeholderImage:nil];
+        [huodongImgView setImageWithURL:[NSURL URLWithString:imgUrl] placeholderImage:nil options:SDWebImageRefreshCached];
         [viewsArray addObject:huodongImgView];
     }
     self.mainScorllView = [[CycleScrollView alloc] initWithFrame:CGRectMake(0, 0, screen_width, 150) animationDuration:2];

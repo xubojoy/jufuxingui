@@ -19,9 +19,7 @@
 @implementation AppDelegate
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     self.window = [[UIWindow alloc]initWithFrame:[[UIScreen mainScreen] bounds]];
-    
-    
-    
+    [NSThread sleepForTimeInterval:0.5];
     if (![[NSUserDefaults standardUserDefaults] boolForKey:@"First"]) {
         IntroduceViewController * IntroduceVC = [[IntroduceViewController alloc]init];
         [[UIApplication sharedApplication] setStatusBarHidden:YES];
@@ -31,18 +29,12 @@
         self.viewController = [[NTViewController alloc]init];
         self.window.rootViewController = self.viewController;
     }
-    
     [[NSUserDefaults standardUserDefaults]setBool:YES forKey:@"First"];
-
-    
-    
     self.localcache=[LocalCache shareuser];
     self.user=[UserModel shareuser];
     [ShareSDKProcessor initShareSDK];
     [JSHttpRequest listenNetworkChange];
     self.window.backgroundColor = [UIColor whiteColor];
-
-   
     [self.window makeKeyAndVisible];
     return YES;
 }
@@ -56,14 +48,12 @@
 
 - (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation
 {
-    //  NSLog(@"链接调到app啦。。。。。。。openURL:%@" , sourceApplication);
         [ShareSDK handleOpenURL:url
               sourceApplication:sourceApplication
                      annotation:annotation
                      wxDelegate:self];
         return YES;
 }
-
 
 - (void)applicationWillResignActive:(UIApplication *)application {
     NSLog(@"applicationWillResignActive");

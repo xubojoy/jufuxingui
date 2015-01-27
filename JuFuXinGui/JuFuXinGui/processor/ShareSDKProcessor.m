@@ -41,22 +41,19 @@
                                description:nil
                                  mediaType:SSPublishContentMediaTypeNews];
         [publishContent addSinaWeiboUnitWithContent:shareContent.sinaWeiBoContent image:shareImg];
-
-    
-        [publishContent addSMSUnitWithContent:shareContent.sinaWeiBoContent];
-        //        [publishContent addTencentWeiboUnitWithContent:[self getShareWithUrlContent] image:[self getShareIamge]];
+        [publishContent addTencentWeiboUnitWithContent:shareContent.content image:shareImg];
         //定制微信好友信息
-        [publishContent addWeixinSessionUnitWithType:@(SSPublishContentMediaTypeNews)
-                                             content:shareContent.content
-                                               title:shareContent.title
-                                                 url:shareContent.url
-                                          thumbImage:wxShareImg
-                                               image:wxShareImg
-                                        musicFileUrl:nil
-                                             extInfo:nil
-                                            fileData:nil
-                                        emoticonData:nil];
-        
+//        [publishContent addWeixinSessionUnitWithType:@(SSPublishContentMediaTypeNews)
+//                                             content:shareContent.content
+//                                               title:shareContent.title
+//                                                 url:shareContent.url
+//                                          thumbImage:wxShareImg
+//                                               image:wxShareImg
+//                                        musicFileUrl:nil
+//                                             extInfo:nil
+//                                            fileData:nil
+//                                        emoticonData:nil];
+    
         //定制微信朋友圈信息
         [publishContent addWeixinTimelineUnitWithType:[[NSNumber alloc] initWithInt:SSPublishContentMediaTypeApp]
                                               content:nil
@@ -68,7 +65,8 @@
                                               extInfo:shareContent.content
                                              fileData:nil
                                          emoticonData:nil];
-    [publishContent addCopyUnitWithContent:shareContent.content image:shareImg];
+    [publishContent addRenRenUnitWithName:shareContent.title description:shareContent.content url:shareContent.url message:nil image:shareImg caption:nil];
+    [publishContent addQQSpaceUnitWithTitle:shareContent.title url:shareContent.url site:nil fromUrl:nil comment:nil summary:shareContent.content image:shareImg type:nil playUrl:nil nswb:nil];
     
     id<ISSContainer> container = [ShareSDK container];
     [container setIPadContainerWithView:sender arrowDirect:UIPopoverArrowDirectionUp];
@@ -248,9 +246,25 @@
     [ShareSDK connectWeChatWithAppId:@"wx94801dec0cb8c12a"
                            wechatCls:[WXApi class]];
     
-    [ShareSDK connectSMS];
-    [ShareSDK connectCopy];
-    //激活SSO
+    
+    //添加腾讯微博应用 注册网址 http://dev.t.qq.com
+    [ShareSDK connectTencentWeiboWithAppKey:@"801307650"
+                                  appSecret:@"ae36f4ee3946e1cbb98d6965b0b2ff5c"
+                                redirectUri:@"http://www.sharesdk.cn"
+                                   wbApiCls:[WeiboApi class]];
+    
+    //添加QQ空间应用  注册网址  http://connect.qq.com/intro/login/
+    [ShareSDK connectQZoneWithAppKey:@"100371282"
+                           appSecret:@"aed9b0303e3ed1e27bae87c33761161d"
+                   qqApiInterfaceCls:[QQApiInterface class]
+                     tencentOAuthCls:[TencentOAuth class]];
+    //添加人人网应用 注册网址  http://dev.renren.com
+    [ShareSDK connectRenRenWithAppId:@"474820"
+                              appKey:@"6ab277aea595499296303f00b86cb93c"
+                           appSecret:@"e9c142f0b94e40279c147ce573f91092"
+                   renrenClientClass:[RennClient class]];
+    
+       //激活SSO
     [ShareSDK ssoEnabled:YES];
 }
 @end
