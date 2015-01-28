@@ -33,6 +33,7 @@
     [scrollView setContentSize:CGSizeMake(3*screen_width, 0)];
     [scrollView setPagingEnabled:YES];
     [scrollView setBounces:NO];
+    scrollView.showsHorizontalScrollIndicator = NO;
     scrollView.showsVerticalScrollIndicator = NO;
     scrollView.pagingEnabled = YES;
     scrollView.delegate = self;

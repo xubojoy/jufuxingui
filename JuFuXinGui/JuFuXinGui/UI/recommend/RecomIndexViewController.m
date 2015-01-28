@@ -125,8 +125,9 @@
     self.mainScorllView.fetchContentViewAtIndex = ^UIView *(NSInteger pageIndex){
         return viewsArray[pageIndex];
     };
+    __weak RecomIndexViewController *rivc = self;
     self.mainScorllView.totalPagesCount = ^NSInteger(void){
-        return 3;
+        return rivc.huodongArray.count;
     };
     [self mainScrollViewTap];
     [self.scrollView addSubview:self.mainScorllView];
@@ -173,7 +174,6 @@
     UIImageView *benxiImgView = [[UIImageView alloc] initWithFrame:CGRectMake(x+100, y, 100, 30)];
     benxiImgView.image = [UIImage imageNamed:@"ben_xi_security_tu_icon"];
     [self.scrollView addSubview:benxiImgView];
-
 }
 
 -(void)initCircleView{
